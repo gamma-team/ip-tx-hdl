@@ -107,7 +107,7 @@ BEGIN
 
     PROCESS(Clk)
         VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
-        VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0);
+        VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0) := (others => '0');
         VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_ip_pkt_len : UNSIGNED(15 DOWNTO 0);
@@ -167,36 +167,54 @@ BEGIN
                         CASE TO_INTEGER(p0_len_read) IS
                             -- Source Address
                             WHEN 0 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_hi(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 1 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_hi(7 DOWNTO 0) <= data_in_sig(i);
                                 ip_addr_src_hi_valid <= '1';
                             WHEN 2 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_lo(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 3 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_lo(7 DOWNTO 0) <= data_in_sig(i);
                                 ip_addr_src_lo_valid <= '1';
                             -- Destination Address
                             WHEN 4 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_hi(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 5 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_hi(7 DOWNTO 0) <= data_in_sig(i);
                                 ip_addr_dst_hi_valid <= '1';
                             WHEN 6 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_lo(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 7 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_lo(7 DOWNTO 0) <= data_in_sig(i);
                                 ip_addr_dst_lo_valid <= '1';
                             -- Protocol
                             WHEN 8 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 IF data_in_sig(i) /= UDP_PROTO THEN
                                     p0_data_in_err <= '1';
@@ -209,21 +227,31 @@ BEGIN
                             -- Start of UDP Header
                             -- Source Port
                             WHEN 9 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(0) <= data_in_sig(i);
                             WHEN 10 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(1) <= data_in_sig(i);
                             -- Destination Port
                             WHEN 11 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(2) <= data_in_sig(i);
                             WHEN 12 =>
+                                p0_data_in_start <= '0';
+                                p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(3) <= data_in_sig(i);
                             -- UDP Packet Length, Start outputting IP header
                             WHEN 13 =>
                                 p0_data_in_valid(i) <= '1';
+                                p0_data_in_start <= '1';
+                                p0_data_in_end <= '0';
                                 p0_data_in(i) <= p0_ip_hdr_len(15 DOWNTO 8);
                                 p0_buf(4) <= data_in_sig(i);
                                 p0_ip_pkt_len(15 DOWNTO 8) := UNSIGNED(data_in_sig(i));
@@ -317,6 +345,7 @@ BEGIN
                                     p0_buf_counter := p0_buf_counter + 1;
                                 END IF;
                         END CASE;
+                        p0_len_read := p0_len_read + 1;
                     END IF;
                 END LOOP;
 
@@ -328,21 +357,21 @@ BEGIN
                 --p1_data_in_err <= p0_data_in_err;
 
                 IF ip_addr_src_hi_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_src_hi);
+                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_src_hi));
                 END IF;
                 IF ip_addr_src_lo_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_src_lo);
+                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_src_lo));
                 END IF;
                 IF ip_addr_dst_hi_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_dst_hi);
+                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_dst_hi));
                 END IF;
                 IF ip_addr_dst_lo_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_dst_lo);
+                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_dst_lo));
                 END IF;
                 IF ip_pkt_len_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&p0_ip_pkt_len;
+                    chk_accum := chk_accum + (x"0"&p0_ip_pkt_len);
                     IF chk_accum(19 DOWNTO 16) = "0000" THEN
-                        p0_ip_hdr_chk <= STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0));
+                        p0_ip_hdr_chk <= "0000" & STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0));
                     ELSE
                         p0_ip_hdr_chk <= STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0) +
                             x"000"&chk_accum(19 DOWNTO 16));
@@ -355,7 +384,7 @@ BEGIN
                 IF p0_end_counter > 24 THEN
                     p0_data_in_end <= '1';
                 END IF;
-                p0_len_read := p0_len_read + 1;
+                
 
                 p0_len_read_place <= p0_len_read;
                 p0_end_counter_place <= p0_end_counter;
