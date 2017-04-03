@@ -163,7 +163,7 @@ BEGIN
 
                 FOR i IN 0 TO width - 1 LOOP
                     -- Run 3 more cycles when receiving end
-                    IF Data_in_valid(i) = '1' AND p0_end_counter < 25 THEN
+                    IF Data_in_valid(i) = '1' OR p0_end_counter > 0 THEN
                         CASE TO_INTEGER(p0_len_read) IS
                             -- Source Address
                             WHEN 0 =>
@@ -344,6 +344,11 @@ BEGIN
                                 ELSE
                                     p0_buf_counter := p0_buf_counter + 1;
                                 END IF;
+                                p0_end_counter := p0_end_counter - 1
+                                IF p0_end_counter = 1 THEN
+                                    p0_data_in_end <= '1';
+                                    p0_end_counter := p0_end_counter - 1;
+                                END IF;
                         END CASE;
                         p0_len_read := p0_len_read + 1;
                     END IF;
@@ -378,13 +383,14 @@ BEGIN
                     END IF;
                     --ip_hdr_chk_valid <= '1';
                 END IF;
-                IF Data_in_end = '1' AND p0_end_counter < 25 THEN
-                    p0_end_counter := p0_end_counter + 1;
+
+                IF Data_in_end = '1' THEN
+                    p0_end_counter := p0_end_counter + 24 + UNSIGNED'(""&Data_in_valid(7))
+                        + UNSIGNED'(""&Data_in_valid(6)) + UNSIGNED'(""&Data_in_valid(5))
+                        + UNSIGNED'(""&Data_in_valid(4)) + UNSIGNED'(""&Data_in_valid(3))
+                        + UNSIGNED'(""&Data_in_valid(2)) + UNSIGNED'(""&Data_in_valid(1))
+                        + UNSIGNED'(""&Data_in_valid(0));;
                 END IF;
-                IF p0_end_counter > 24 THEN
-                    p0_data_in_end <= '1';
-                END IF;
-                
 
                 p0_len_read_place <= p0_len_read;
                 p0_end_counter_place <= p0_end_counter;
