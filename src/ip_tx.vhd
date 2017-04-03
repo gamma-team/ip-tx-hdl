@@ -77,7 +77,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_buf : BUF;
 
     SIGNAL p0_ip_hdr_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL p0_ip_pkt_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    --SIGNAL p0_ip_pkt_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_id : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_flag_frag : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_ttl_proto : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -89,12 +89,6 @@ ARCHITECTURE normal OF ip_tx IS
 
     SIGNAL p0_len_read_place : UNSIGNED(15 DOWNTO 0);
     SIGNAL p0_end_counter_place : UNSIGNED(4 DOWNTO 0);
-
-    SIGNAL p0_data_in : DATA_BUS;
-    SIGNAL p0_data_in_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
-    SIGNAL p0_data_in_start : STD_LOGIC;
-    SIGNAL p0_data_in_end : STD_LOGIC;
-    SIGNAL p0_data_in_err : STD_LOGIC;
 
     -- May need new pipeline stage to get things to line up
     --SIGNAL p1_data_in : DATA_BUS;
@@ -116,6 +110,7 @@ BEGIN
         VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0);
         VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
+        VARIABLE p0_ip_pkt_len : UNSIGNED(15 DOWNTO 0);
     BEGIN
         IF rising_edge(Clk) THEN
             IF Rst = '1' THEN
@@ -123,7 +118,6 @@ BEGIN
                 ip_addr_src_lo_valid <= '0';
                 ip_addr_dst_hi_valid <= '0';
                 ip_addr_dst_lo_valid <= '0';
-                ip_ttl_proto_valid <= '0';
                 ip_pkt_len_valid <= '0';
                 --ip_hdr_chk_valid <= '0';
 
@@ -138,7 +132,8 @@ BEGIN
                 p0_buf <= (OTHERS => x"00");
 
                 p0_ip_hdr_len <= x"4500";
-                p0_ip_pkt_len <= (OTHERS => '0');
+                --p0_ip_pkt_len <= (OTHERS => '0');
+                p0_ip_pkt_len := (OTHERS => '0');
                 p0_ip_id <= (OTHERS => '0');
                 p0_ip_flag_frag <= (OTHERS => '0');
                 p0_ip_ttl_proto <= x"4011";
@@ -206,8 +201,6 @@ BEGIN
                                 IF data_in_sig(i) /= UDP_PROTO THEN
                                     p0_data_in_err <= '1';
                                 END IF;
-                                p0_ip_ttl_proto(7 DOWNTO 0) <= data_in_sig(i);
-                                ip_ttl_proto_valid <= '1';
                                 --chk_accum := chk_accum + x"4011";
                                 --IF chk_accum(16) = '1' THEN
                                 --    chk_accum(16) := '0';
@@ -233,22 +226,21 @@ BEGIN
                                 p0_data_in_valid(i) <= '1';
                                 p0_data_in(i) <= p0_ip_hdr_len(15 DOWNTO 8);
                                 p0_buf(4) <= data_in_sig(i);
-                                p0_ip_pkt_len(15 DOWNTO 8) <= data_in_sig(i);
+                                p0_ip_pkt_len(15 DOWNTO 8) := UNSIGNED(data_in_sig(i));
                             WHEN 14 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_data_in(i) <= p0_ip_hdr_len(7 DOWNTO 0);
                                 p0_buf(5) <= data_in_sig(i);
-                                p0_ip_pkt_len <= p0_ip_pkt_len + x"00" & data_in_sig(i);
-                                    + 20;
+                                p0_ip_pkt_len := p0_ip_pkt_len + UNSIGNED(data_in_sig(i)) + 20;
                                 ip_pkt_len_valid <= '1';
                             WHEN 15 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(6) <= data_in_sig(i);
-                                p0_data_in(i) <= p0_ip_pkt_len(15 DOWNTO 8);
+                                p0_data_in(i) <= STD_LOGIC_VECTOR(p0_ip_pkt_len(15 DOWNTO 8));
                             WHEN 16 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(7) <= data_in_sig(i);
-                                p0_data_in(i) <= p0_ip_pkt_len(7 DOWNTO 0);
+                                p0_data_in(i) <= STD_LOGIC_VECTOR(p0_ip_pkt_len(7 DOWNTO 0));
                             WHEN 17 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(8) <= data_in_sig(i);
@@ -348,12 +340,12 @@ BEGIN
                     chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_dst_lo);
                 END IF;
                 IF ip_pkt_len_valid = '1' THEN
-                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_pkt_len);
+                    chk_accum := chk_accum + x"0"&p0_ip_pkt_len;
                     IF chk_accum(19 DOWNTO 16) = "0000" THEN
-                        p0_ip_hdr_chk <= chk_accum(15 DOWNTO 0);
+                        p0_ip_hdr_chk <= STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0));
                     ELSE
-                        p0_ip_hdr_chk <= chk_accum(15 DOWNTO 0) +
-                            x"000"&chk_accum(19 DOWNTO 16);
+                        p0_ip_hdr_chk <= STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0) +
+                            x"000"&chk_accum(19 DOWNTO 16));
                     END IF;
                     --ip_hdr_chk_valid <= '1';
                 END IF;
