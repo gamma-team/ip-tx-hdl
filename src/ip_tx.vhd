@@ -344,7 +344,7 @@ BEGIN
                                 ELSE
                                     p0_buf_counter := p0_buf_counter + 1;
                                 END IF;
-                                p0_end_counter := p0_end_counter - 1
+                                p0_end_counter := p0_end_counter - 1;
                                 IF p0_end_counter = 1 THEN
                                     p0_data_in_end <= '1';
                                     p0_end_counter := p0_end_counter - 1;
@@ -389,7 +389,7 @@ BEGIN
                         + UNSIGNED'(""&Data_in_valid(6)) + UNSIGNED'(""&Data_in_valid(5))
                         + UNSIGNED'(""&Data_in_valid(4)) + UNSIGNED'(""&Data_in_valid(3))
                         + UNSIGNED'(""&Data_in_valid(2)) + UNSIGNED'(""&Data_in_valid(1))
-                        + UNSIGNED'(""&Data_in_valid(0));;
+                        + UNSIGNED'(""&Data_in_valid(0));
                 END IF;
 
                 p0_len_read_place <= p0_len_read;
