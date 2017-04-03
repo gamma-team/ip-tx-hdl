@@ -75,6 +75,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_data_in_err : STD_LOGIC;
 
     SIGNAL p0_buf : BUF;
+    SIGNAL p0_valid_buf : STD_LOGIC_VECTOR(23 DOWNTO 0);
 
     SIGNAL p0_ip_hdr_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
     --SIGNAL p0_ip_pkt_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -108,7 +109,7 @@ BEGIN
     PROCESS(Clk)
         VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
         VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0) := (others => '0');
-        VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0);
+        VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0) := (others => '0');
         VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_ip_pkt_len : UNSIGNED(15 DOWNTO 0);
     BEGIN
@@ -130,6 +131,7 @@ BEGIN
                 p0_end_counter_place <= (OTHERS => '0');
 
                 p0_buf <= (OTHERS => x"00");
+                p0_valid_buf <= (OTHERS => '0');
 
                 p0_ip_hdr_len <= x"4500";
                 --p0_ip_pkt_len <= (OTHERS => '0');
@@ -231,22 +233,26 @@ BEGIN
                                 p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(0) <= data_in_sig(i);
+                                p0_valid_buf(0) <= Data_in_valid(i);
                             WHEN 10 =>
                                 p0_data_in_start <= '0';
                                 p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(1) <= data_in_sig(i);
+                                p0_valid_buf(1) <= Data_in_valid(i);
                             -- Destination Port
                             WHEN 11 =>
                                 p0_data_in_start <= '0';
                                 p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(2) <= data_in_sig(i);
+                                p0_valid_buf(2) <= Data_in_valid(i);
                             WHEN 12 =>
                                 p0_data_in_start <= '0';
                                 p0_data_in_end <= '0';
                                 p0_data_in_valid(i) <= '0';
                                 p0_buf(3) <= data_in_sig(i);
+                                p0_valid_buf(3) <= Data_in_valid(i);
                             -- UDP Packet Length, Start outputting IP header
                             WHEN 13 =>
                                 p0_data_in_valid(i) <= '1';
@@ -254,91 +260,115 @@ BEGIN
                                 p0_data_in_end <= '0';
                                 p0_data_in(i) <= p0_ip_hdr_len(15 DOWNTO 8);
                                 p0_buf(4) <= data_in_sig(i);
+                                p0_valid_buf(4) <= Data_in_valid(i);
                                 p0_ip_pkt_len(15 DOWNTO 8) := UNSIGNED(data_in_sig(i));
                             WHEN 14 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_data_in(i) <= p0_ip_hdr_len(7 DOWNTO 0);
                                 p0_buf(5) <= data_in_sig(i);
+                                p0_valid_buf(5) <= Data_in_valid(i);
                                 p0_ip_pkt_len := p0_ip_pkt_len + UNSIGNED(data_in_sig(i)) + 20;
                                 ip_pkt_len_valid <= '1';
                             WHEN 15 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(6) <= data_in_sig(i);
+                                p0_valid_buf(6) <= Data_in_valid(i);
                                 p0_data_in(i) <= STD_LOGIC_VECTOR(p0_ip_pkt_len(15 DOWNTO 8));
                             WHEN 16 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(7) <= data_in_sig(i);
+                                p0_valid_buf(7) <= Data_in_valid(i);
                                 p0_data_in(i) <= STD_LOGIC_VECTOR(p0_ip_pkt_len(7 DOWNTO 0));
+
                             WHEN 17 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(8) <= data_in_sig(i);
+                                p0_valid_buf(8) <= Data_in_valid(i);
                                 p0_data_in(i) <= (OTHERS => '0');
                             WHEN 18 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(9) <= data_in_sig(i);
+                                p0_valid_buf(9) <= Data_in_valid(i);
                                 p0_data_in(i) <= (OTHERS => '0');
                             WHEN 19 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(10) <= data_in_sig(i);
+                                p0_valid_buf(10) <= Data_in_valid(i);
                                 p0_data_in(i) <= (OTHERS => '0');
                             WHEN 20 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(11) <= data_in_sig(i);
+                                p0_valid_buf(11) <= Data_in_valid(i);
                                 p0_data_in(i) <= (OTHERS => '0');
                             WHEN 21 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(12) <= data_in_sig(i);
+                                p0_valid_buf(12) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_ttl_proto(15 DOWNTO 8);
                             WHEN 22 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(13) <= data_in_sig(i);
+                                p0_valid_buf(13) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_ttl_proto(7 DOWNTO 0);
                             WHEN 23 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(14) <= data_in_sig(i);
+                                p0_valid_buf(14) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_hdr_chk(15 DOWNTO 8);
                             WHEN 24 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(15) <= data_in_sig(i);
+                                p0_valid_buf(15) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_hdr_chk(7 DOWNTO 0);
                             WHEN 25 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(16) <= data_in_sig(i);
+                                p0_valid_buf(16) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_src_hi(15 DOWNTO 8);
                             WHEN 26 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(17) <= data_in_sig(i);
+                                p0_valid_buf(17) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_src_hi(7 DOWNTO 0);
                             WHEN 27 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(18) <= data_in_sig(i);
+                                p0_valid_buf(18) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_src_lo(15 DOWNTO 8);
                             WHEN 28 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(19) <= data_in_sig(i);
+                                p0_valid_buf(19) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_src_lo(7 DOWNTO 0);
                             WHEN 29 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(20) <= data_in_sig(i);
+                                p0_valid_buf(20) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_dst_hi(15 DOWNTO 8);
                             WHEN 30 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(21) <= data_in_sig(i);
+                                p0_valid_buf(21) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_dst_hi(7 DOWNTO 0);
                             WHEN 31 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(22) <= data_in_sig(i);
+                                p0_valid_buf(22) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_dst_lo(15 DOWNTO 8);
                             WHEN 32 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(23) <= data_in_sig(i);
+                                p0_valid_buf(23) <= Data_in_valid(i);
                                 p0_data_in(i) <= p0_ip_addr_dst_lo(7 DOWNTO 0);
                             WHEN OTHERS =>
-                                p0_data_in_valid(i) <= '1';
+                                p0_data_in_valid(i) <= p0_valid_buf(TO_INTEGER(
+                                    p0_buf_counter));
                                 p0_data_in(i) <= p0_buf(TO_INTEGER(
                                     p0_buf_counter));
                                 p0_buf(TO_INTEGER(p0_buf_counter))
                                     <= data_in_sig(i);
+                                p0_valid_buf(TO_INTEGER(p0_buf_counter))
+                                    <= Data_in_valid(i);
                                 IF p0_buf_counter = "10111" THEN
                                     p0_buf_counter := "00000";
                                 ELSE
@@ -404,6 +434,6 @@ BEGIN
     END GENERATE;
     Data_out_valid <= p1_data_in_valid;
     Data_out_start <= p1_data_in_start;
-    Data_out_end <= p1_data_in_end;
+    Data_out_end <= p0_data_in_end;
     Data_out_err <= p1_data_in_err;
 END ARCHITECTURE;
