@@ -61,10 +61,15 @@ ARCHITECTURE normal OF ip_tx IS
         OF STD_LOGIC_VECTOR(7 DOWNTO 0);
     TYPE BUF IS ARRAY (23 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    -- Keeping pipeline prefix for potential future addition
+    SIGNAL ip_addr_src_hi_valid : STD_LOGIC;
+    SIGNAL ip_addr_src_lo_valid : STD_LOGIC;
+    SIGNAL ip_addr_dst_hi_valid : STD_LOGIC;
+    SIGNAL ip_addr_dst_lo_valid : STD_LOGIC;
+    SIGNAL ip_pkt_len_valid : STD_LOGIC;
+    --SIGNAL ip_hdr_chk_valid : STD_LOGIC;
+
     SIGNAL p0_data_in : DATA_BUS;
-    SIGNAL p0_data_in_valid
-        : STD_LOGIC_VECTOR(Data_in_valid'length - 1 DOWNTO 0);
+    SIGNAL p0_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p0_data_in_start : STD_LOGIC;
     SIGNAL p0_data_in_end : STD_LOGIC;
     SIGNAL p0_data_in_err : STD_LOGIC;
@@ -76,7 +81,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_ip_id : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_flag_frag : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_ttl_proto : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL p0_ip_hdr_chk : STD_LOGIC_VECTOR(16 DOWNTO 0);
+    SIGNAL p0_ip_hdr_chk : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL p0_ip_addr_src_hi : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_addr_src_lo : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_addr_dst_hi : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -84,6 +89,20 @@ ARCHITECTURE normal OF ip_tx IS
 
     SIGNAL p0_len_read_place : UNSIGNED(15 DOWNTO 0);
     SIGNAL p0_end_counter_place : UNSIGNED(4 DOWNTO 0);
+
+    SIGNAL p0_data_in : DATA_BUS;
+    SIGNAL p0_data_in_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
+    SIGNAL p0_data_in_start : STD_LOGIC;
+    SIGNAL p0_data_in_end : STD_LOGIC;
+    SIGNAL p0_data_in_err : STD_LOGIC;
+
+    -- May need new pipeline stage to get things to line up
+    --SIGNAL p1_data_in : DATA_BUS;
+    --SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
+    --SIGNAL p1_data_in_start : STD_LOGIC;
+    --SIGNAL p1_data_in_end : STD_LOGIC;
+    --SIGNAL p1_data_in_err : STD_LOGIC;
+
     SIGNAL data_in_sig : DATA_BUS;
 
 BEGIN
@@ -93,13 +112,21 @@ BEGIN
     END GENERATE;
 
     PROCESS(Clk)
-        VARIABLE p0_len_read : UNSIGNED(p0_len_read_place'length - 1 DOWNTO 0);
-        VARIABLE p0_chk_accum: UNSIGNED(p0_ip_hdr_chk'length - 1 DOWNTO 0);
+        VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
+        VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0);
         VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
     BEGIN
         IF rising_edge(Clk) THEN
             IF Rst = '1' THEN
+                ip_addr_src_hi_valid <= '0';
+                ip_addr_src_lo_valid <= '0';
+                ip_addr_dst_hi_valid <= '0';
+                ip_addr_dst_lo_valid <= '0';
+                ip_ttl_proto_valid <= '0';
+                ip_pkt_len_valid <= '0';
+                --ip_hdr_chk_valid <= '0';
+
                 p0_data_in <= (OTHERS => x"00");
                 p0_data_in_valid <= (OTHERS => '0');
                 p0_data_in_start <= '0';
@@ -114,12 +141,18 @@ BEGIN
                 p0_ip_pkt_len <= (OTHERS => '0');
                 p0_ip_id <= (OTHERS => '0');
                 p0_ip_flag_frag <= (OTHERS => '0');
-                p0_ip_ttl_proto <= x"4000";
-                p0_ip_hdr_chk <= '0' & x"8500";
+                p0_ip_ttl_proto <= x"4011";
+                p0_ip_hdr_chk <= x"08511";
                 p0_ip_addr_src_hi <= (OTHERS => '0');
                 p0_ip_addr_src_lo <= (OTHERS => '0');
                 p0_ip_addr_dst_hi <= (OTHERS => '0');
                 p0_ip_addr_dst_lo <= (OTHERS => '0');
+
+                --p1_data_in <= (OTHERS => x"00");
+                --p1_data_in_valid <= (OTHERS => '0');
+                --p1_data_in_start <= '0';
+                --p1_data_in_end <= '0';
+                --p1_data_in_err <= '0';
             ELSE
                 p0_data_in <= data_in_sig;
                 p0_data_in_valid <= (OTHERS => '0');
@@ -129,12 +162,13 @@ BEGIN
 
                 p0_len_read := p0_len_read_place;
                 p0_end_counter := p0_end_counter_place;
-                p0_chk_accum := UNSIGNED(p0_ip_hdr_chk);
                 IF Data_in_start = '1' THEN
                     p0_len_read := (OTHERS => '0');
                 END IF;
+
                 FOR i IN 0 TO width - 1 LOOP
-                    IF Data_in_valid(i) = '1' OR Data_in_end = '1' THEN
+                    -- Run 3 more cycles when receiving end
+                    IF Data_in_valid(i) = '1' AND p0_end_counter < 25 THEN
                         CASE TO_INTEGER(p0_len_read) IS
                             -- Source Address
                             WHEN 0 =>
@@ -143,12 +177,14 @@ BEGIN
                             WHEN 1 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_hi(7 DOWNTO 0) <= data_in_sig(i);
+                                ip_addr_src_hi_valid <= '1';
                             WHEN 2 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_lo(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 3 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_src_lo(7 DOWNTO 0) <= data_in_sig(i);
+                                ip_addr_src_lo_valid <= '1';
                             -- Destination Address
                             WHEN 4 =>
                                 p0_data_in_valid(i) <= '0';
@@ -156,12 +192,14 @@ BEGIN
                             WHEN 5 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_hi(7 DOWNTO 0) <= data_in_sig(i);
+                                ip_addr_dst_hi_valid <= '1';
                             WHEN 6 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_lo(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 7 =>
                                 p0_data_in_valid(i) <= '0';
                                 p0_ip_addr_dst_lo(7 DOWNTO 0) <= data_in_sig(i);
+                                ip_addr_dst_lo_valid <= '1';
                             -- Protocol
                             WHEN 8 =>
                                 p0_data_in_valid(i) <= '0';
@@ -169,12 +207,12 @@ BEGIN
                                     p0_data_in_err <= '1';
                                 END IF;
                                 p0_ip_ttl_proto(7 DOWNTO 0) <= data_in_sig(i);
-
-                                p0_chk_accum := p0_chk_accum + x"4011";
-                                IF p0_chk_accum(16) = '1' THEN
-                                    p0_chk_accum(16) := '0';
-                                    p0_chk_accum := p0_chk_accum + 1;
-                                END IF;
+                                ip_ttl_proto_valid <= '1';
+                                --chk_accum := chk_accum + x"4011";
+                                --IF chk_accum(16) = '1' THEN
+                                --    chk_accum(16) := '0';
+                                --    chk_accum := chk_accum + 1;
+                                --END IF;
                             -- Start of UDP Header
                             -- Source Port
                             WHEN 9 =>
@@ -195,21 +233,14 @@ BEGIN
                                 p0_data_in_valid(i) <= '1';
                                 p0_data_in(i) <= p0_ip_hdr_len(15 DOWNTO 8);
                                 p0_buf(4) <= data_in_sig(i);
-                                p0_ip_pkt_len(15 DOWNTO 8 ) <= data_in_sig(i);
+                                p0_ip_pkt_len(15 DOWNTO 8) <= data_in_sig(i);
                             WHEN 14 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_data_in(i) <= p0_ip_hdr_len(7 DOWNTO 0);
                                 p0_buf(5) <= data_in_sig(i);
-                                p0_ip_pkt_len(7 DOWNTO 0) <= data_in_sig(i);
-                                p0_ip_pkt_len <= STD_LOGIC_VECTOR(UNSIGNED(
-                                    p0_ip_pkt_len) + 20);
-                                p0_chk_accum := p0_chk_accum +
-                                    UNSIGNED(p0_ip_pkt_len);
-                                IF p0_chk_accum(16) = '1' THEN
-                                    p0_chk_accum(16) := '0';
-                                    p0_chk_accum := p0_chk_accum + 1;
-                                END IF;
-                            -- UDP Checksum
+                                p0_ip_pkt_len <= p0_ip_pkt_len + x"00" & data_in_sig(i);
+                                    + 20;
+                                ip_pkt_len_valid <= '1';
                             WHEN 15 =>
                                 p0_data_in_valid(i) <= '1';
                                 p0_buf(6) <= data_in_sig(i);
@@ -294,26 +325,48 @@ BEGIN
                                     p0_buf_counter := p0_buf_counter + 1;
                                 END IF;
                         END CASE;
-                        IF p0_len_read < 8 AND i MOD 2 = 1 THEN
-                            p0_chk_accum := p0_chk_accum + (UNSIGNED(
-                                data_in_sig(i-1)) & UNSIGNED(data_in_sig(i)));
-                            IF p0_chk_accum(16) = '1' THEN
-                                p0_chk_accum(16) := '0';
-                                p0_chk_accum := p0_chk_accum + 1;
-                            END IF;
-                        END IF;
-                        IF Data_in_end = '1' AND p0_end_counter < 25 THEN
-                            p0_end_counter := p0_end_counter + 1;
-                        END IF;
-                        IF p0_end_counter > 24 THEN
-                            p0_data_in_end <= '1';
-                        END IF;
-                        p0_len_read := p0_len_read + 1;
                     END IF;
                 END LOOP;
+
+                -- if output needs to be delayed, new pipleine stage
+                --p1_data_in <= p0_data_in;
+                --p1_data_in_valid <= p0_data_in_valid;
+                --p1_data_in_start <= p0_data_in_start;
+                --p1_data_in_end <= p0_data_in_end;
+                --p1_data_in_err <= p0_data_in_err;
+
+                IF ip_addr_src_hi_valid = '1' THEN
+                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_src_hi);
+                END IF;
+                IF ip_addr_src_lo_valid = '1' THEN
+                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_src_lo);
+                END IF;
+                IF ip_addr_dst_hi_valid = '1' THEN
+                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_dst_hi);
+                END IF;
+                IF ip_addr_dst_lo_valid = '1' THEN
+                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_addr_dst_lo);
+                END IF;
+                IF ip_pkt_len_valid = '1' THEN
+                    chk_accum := chk_accum + x"0"&UNSIGNED(p0_ip_pkt_len);
+                    IF chk_accum(19 DOWNTO 16) = "0000" THEN
+                        p0_ip_hdr_chk <= chk_accum(15 DOWNTO 0);
+                    ELSE
+                        p0_ip_hdr_chk <= chk_accum(15 DOWNTO 0) +
+                            x"000"&chk_accum(19 DOWNTO 16);
+                    END IF;
+                    --ip_hdr_chk_valid <= '1';
+                END IF;
+                IF Data_in_end = '1' AND p0_end_counter < 25 THEN
+                    p0_end_counter := p0_end_counter + 1;
+                END IF;
+                IF p0_end_counter > 24 THEN
+                    p0_data_in_end <= '1';
+                END IF;
+                p0_len_read := p0_len_read + 1;
+
                 p0_len_read_place <= p0_len_read;
                 p0_end_counter_place <= p0_end_counter;
-                p0_ip_hdr_chk <= STD_LOGIC_VECTOR(p0_chk_accum);
             END IF;
         END IF;
     END PROCESS;
