@@ -47,7 +47,7 @@ SIGNAL Data_in          : STD_LOGIC_VECTOR(data_width * 8 - 1 DOWNTO 0);
 SIGNAL Data_in_valid    : STD_LOGIC_VECTOR(data_width - 1 DOWNTO 0);
 SIGNAL Data_in_start    : STD_LOGIC;
 SIGNAL Data_in_end      : STD_LOGIC;
---SIGNAL Data_in_err      : STD_LOGIC;
+SIGNAL Data_in_err      : STD_LOGIC;
 SIGNAL Data_out         : STD_LOGIC_VECTOR(data_width * 8 - 1 DOWNTO 0);
 SIGNAL Data_out_valid   : STD_LOGIC_VECTOR(data_width - 1 DOWNTO 0);
 SIGNAL Data_out_start   : STD_LOGIC;
@@ -77,6 +77,7 @@ COMPONENT ip_tx IS
         Data_in_start : IN STD_LOGIC;
         -- Asserted when the last valid data is available on Data_in.
         Data_in_end : IN STD_LOGIC;
+        Data_in_err : IN STD_LOGIC;
 
         -- IPv4 output bus to the MAC.
         -- Byte offsets (all integer types are big endian):
@@ -113,7 +114,7 @@ Data_in            => Data_in,
 Data_in_valid      => Data_in_valid,
 Data_in_start      => Data_in_start,
 Data_in_end        => Data_in_end,
---Data_in_err        => Data_in_err,
+Data_in_err        => Data_in_err,
 Data_out           => Data_out,
 Data_out_valid     => Data_out_valid,
 Data_out_start     => Data_out_start,
@@ -166,7 +167,7 @@ BEGIN
     Data_in_valid     <= (OTHERS => '0');
     Data_in_start     <= '0';
     Data_in_end       <= '0';
-    --Data_in_err       <= '0';
+    Data_in_err       <= '0';
     -- wait for 10 clock cycles
     WAIT FOR 10 * period;
     
@@ -192,7 +193,7 @@ BEGIN
         
         -- Wait for rising edge to change data
         -- possible change to falling edge for more stable clock edges
-        WAIT UNTIL RISING_EDGE(Clk);
+        WAIT UNTIL FALLING_EDGE(Clk);
     END LOOP;
     
     -- set module inputs to 0
