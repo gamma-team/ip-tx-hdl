@@ -91,11 +91,11 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_end_counter_place : UNSIGNED(4 DOWNTO 0);
 
     -- May need new pipeline stage to get things to line up
-    --SIGNAL p1_data_in : DATA_BUS;
-    --SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
-    --SIGNAL p1_data_in_start : STD_LOGIC;
-    --SIGNAL p1_data_in_end : STD_LOGIC;
-    --SIGNAL p1_data_in_err : STD_LOGIC;
+    SIGNAL p1_data_in : DATA_BUS;
+    SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(width - 1 DOWNTO 0);
+    SIGNAL p1_data_in_start : STD_LOGIC;
+    SIGNAL p1_data_in_end : STD_LOGIC;
+    SIGNAL p1_data_in_err : STD_LOGIC;
 
     SIGNAL data_in_sig : DATA_BUS;
 
@@ -143,11 +143,11 @@ BEGIN
                 p0_ip_addr_dst_hi <= (OTHERS => '0');
                 p0_ip_addr_dst_lo <= (OTHERS => '0');
 
-                --p1_data_in <= (OTHERS => x"00");
-                --p1_data_in_valid <= (OTHERS => '0');
-                --p1_data_in_start <= '0';
-                --p1_data_in_end <= '0';
-                --p1_data_in_err <= '0';
+                p1_data_in <= (OTHERS => x"00");
+                p1_data_in_valid <= (OTHERS => '0');
+                p1_data_in_start <= '0';
+                p1_data_in_end <= '0';
+                p1_data_in_err <= '0';
             ELSE
                 p0_data_in <= data_in_sig;
                 p0_data_in_valid <= (OTHERS => '0');
@@ -355,11 +355,11 @@ BEGIN
                 END LOOP;
 
                 -- if output needs to be delayed, new pipleine stage
-                --p1_data_in <= p0_data_in;
-                --p1_data_in_valid <= p0_data_in_valid;
-                --p1_data_in_start <= p0_data_in_start;
-                --p1_data_in_end <= p0_data_in_end;
-                --p1_data_in_err <= p0_data_in_err;
+                p1_data_in <= p0_data_in;
+                p1_data_in_valid <= p0_data_in_valid;
+                p1_data_in_start <= p0_data_in_start;
+                p1_data_in_end <= p0_data_in_end;
+                p1_data_in_err <= p0_data_in_err;
 
                 IF ip_addr_src_hi_valid = '1' THEN
                     chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_src_hi));
@@ -400,10 +400,10 @@ BEGIN
 
     -- Output signal wiring
     gen_out_data: FOR i IN 0 TO width - 1 GENERATE
-        Data_out((i + 1) * 8 - 1 DOWNTO i * 8) <= p0_data_in(i);
+        Data_out((i + 1) * 8 - 1 DOWNTO i * 8) <= p1_data_in(i);
     END GENERATE;
-    Data_out_valid <= p0_data_in_valid;
-    Data_out_start <= p0_data_in_start;
-    Data_out_end <= p0_data_in_end;
-    Data_out_err <= p0_data_in_err;
+    Data_out_valid <= p1_data_in_valid;
+    Data_out_start <= p1_data_in_start;
+    Data_out_end <= p1_data_in_end;
+    Data_out_err <= p1_data_in_err;
 END ARCHITECTURE;
