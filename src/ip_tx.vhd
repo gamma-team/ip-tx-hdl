@@ -82,7 +82,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_ip_id : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_flag_frag : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_ttl_proto : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL p0_ip_hdr_chk : STD_LOGIC_VECTOR(19 DOWNTO 0);
+    SIGNAL p0_ip_hdr_chk : STD_LOGIC_VECTOR(20 DOWNTO 0);
     SIGNAL p0_ip_addr_src_hi : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_addr_src_lo : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL p0_ip_addr_dst_hi : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -108,7 +108,7 @@ BEGIN
 
     PROCESS(Clk)
         VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
-        VARIABLE chk_accum: UNSIGNED(19 DOWNTO 0) := (others => '0');
+        VARIABLE chk_accum: UNSIGNED(20 DOWNTO 0) := (others => '0');
         VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0) := (others => '0');
         VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
         VARIABLE p0_ip_pkt_len : UNSIGNED(15 DOWNTO 0);
@@ -139,7 +139,7 @@ BEGIN
                 p0_ip_id <= (OTHERS => '0');
                 p0_ip_flag_frag <= (OTHERS => '0');
                 p0_ip_ttl_proto <= x"4011";
-                p0_ip_hdr_chk <= x"08511";
+                p0_ip_hdr_chk <= "0"&x"08511";
                 p0_ip_addr_src_hi <= (OTHERS => '0');
                 p0_ip_addr_src_lo <= (OTHERS => '0');
                 p0_ip_addr_dst_hi <= (OTHERS => '0');
@@ -392,24 +392,24 @@ BEGIN
                 p1_data_in_err <= p0_data_in_err;
 
                 IF ip_addr_src_hi_valid = '1' THEN
-                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_src_hi));
+                    chk_accum := chk_accum + ("00000"&UNSIGNED(p0_ip_addr_src_hi));
                 END IF;
                 IF ip_addr_src_lo_valid = '1' THEN
-                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_src_lo));
+                    chk_accum := chk_accum + ("00000"&UNSIGNED(p0_ip_addr_src_lo));
                 END IF;
                 IF ip_addr_dst_hi_valid = '1' THEN
-                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_dst_hi));
+                    chk_accum := chk_accum + ("00000"&UNSIGNED(p0_ip_addr_dst_hi));
                 END IF;
                 IF ip_addr_dst_lo_valid = '1' THEN
-                    chk_accum := chk_accum + (x"0"&UNSIGNED(p0_ip_addr_dst_lo));
+                    chk_accum := chk_accum + ("00000"&UNSIGNED(p0_ip_addr_dst_lo));
                 END IF;
                 IF ip_pkt_len_valid = '1' THEN
-                    chk_accum := chk_accum + (x"0"&p0_ip_pkt_len);
-                    IF chk_accum(19 DOWNTO 16) = "0000" THEN
-                        p0_ip_hdr_chk <= "0000" & STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0));
+                    chk_accum := chk_accum + ("00000"&p0_ip_pkt_len);
+                    IF chk_accum(20 DOWNTO 16) = "00000" THEN
+                        p0_ip_hdr_chk <= "00000" & STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0));
                     ELSE
                         p0_ip_hdr_chk <= STD_LOGIC_VECTOR(chk_accum(15 DOWNTO 0) +
-                            x"000"&chk_accum(19 DOWNTO 16));
+                            "00000000000"&chk_accum(20 DOWNTO 16));
                     END IF;
                     --ip_hdr_chk_valid <= '1';
                 END IF;
