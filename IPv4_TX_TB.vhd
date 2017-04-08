@@ -26,12 +26,12 @@ USE IEEE.STD_LOGIC_TEXTIO.ALL;
 USE STD.TEXTIO.ALL;
 USE WORK.TXT_UTIL.ALL;
 
-ENTITY IPv4_TX_TB IS
-END IPv4_TX_TB;
+ENTITY IP_TX_TB IS
+END IP_TX_TB;
 
-ARCHITECTURE Behavioral OF IPv4_TX_TB IS
+ARCHITECTURE Behavioral OF IP_TX_TB IS
 -- output file
-FILE Data_output        : TEXT OPEN WRITE_MODE IS "output.txt";
+FILE Data_output        : TEXT OPEN WRITE_MODE IS "IPv4_Tx_Test_Suite_output.txt";
 -- CONSTANT declarations
 -- data width of interfacing buses
 CONSTANT data_width     : POSITIVE := 8;
@@ -53,6 +53,10 @@ SIGNAL Data_out_valid   : STD_LOGIC_VECTOR(data_width - 1 DOWNTO 0);
 SIGNAL Data_out_start   : STD_LOGIC;
 SIGNAL Data_out_end     : STD_LOGIC;
 SIGNAL Data_out_err     : STD_LOGIC;
+SIGNAL Data_in_cycles   : INTEGER;
+SIGNAL Data_out_cycles   : INTEGER := 0;
+TYPE TC is array (0 to 9) of STRING(1 to 3);
+SIGNAL Test_cases       : TC;
 
 -- Component declaration from Github
 COMPONENT ip_tx IS
@@ -102,10 +106,8 @@ COMPONENT ip_tx IS
 END COMPONENT;
 
 BEGIN
--- Instantiate the ip_rx module
+-- Instantiate the ip_tx module
 IPv4_TX_i: ip_tx
--- Pass the data width generic to the module
-GENERIC MAP(width => data_width)
 -- Map the signals from the module to test bench
 PORT MAP(
 Clk                => Clk,
@@ -158,26 +160,82 @@ FILE_LOADER: PROCESS
     VARIABLE V_space   : CHARACTER;
     VARIABLE Rdata     : LINE;
     VARIABLE Start     : STD_LOGIC;
+    VARIABLE Cur_tc    : STRING(1 to 3);
+    VARIABLE tc_plc    : INTEGER;
 BEGIN
     -- set the load completion signal to 0
     Load_complete <= '0';
-    
+    tc_plc := 0;
     -- set module inputs to 0
     Data_in           <= (OTHERS => '0');
     Data_in_valid     <= (OTHERS => '0');
     Data_in_start     <= '0';
     Data_in_end       <= '0';
     Data_in_err       <= '0';
+    Data_in_cycles    <= 0;
+    Test_cases(0)<="TC0";
+    Test_cases(1)<="TC0";
+    Test_cases(2)<="TC0";
+    Test_cases(3)<="TC0";
+    Test_cases(4)<="TC0";
+    Test_cases(5)<="TC0";
+    Test_cases(6)<="TC0";
+    Test_cases(7)<="TC0";
+    Test_cases(8)<="TC0";
+    Test_cases(9)<="TC0";
     -- wait for 10 clock cycles
     WAIT FOR 10 * period;
     
     REPORT "TB - loading test data";
     -- open test case file
-    file_open(Test_file, "TX_test.txt", READ_MODE);
+    file_open(Test_file, "IPv4_Tx_Test_Suite.txt", READ_MODE);
+    WAIT UNTIL FALLING_EDGE(Clk);
+    READLINE(Test_file, Rdata);
+    READ(Rdata, Cur_tc);
+    READ(Rdata, V_space);
+    IF (Cur_tc /= Test_cases(tc_plc)) THEN
+        IF (tc_plc > 0) THEN
+            IF (Cur_tc /= Test_cases(tc_plc - 1)) THEN
+                Test_cases(tc_plc) <= Cur_tc;
+                tc_plc := tc_plc + 1;
+            END IF;
+        ELSE
+            Test_cases(tc_plc) <= Cur_tc;
+            tc_plc := tc_plc + 1;
+        END IF;
+    END IF;
+    HREAD(Rdata, Data_din);
+    READ(Rdata, V_space);
+    HREAD(Rdata, Data_vin);
+    READ(Rdata, V_space);
+    HREAD(Rdata, Data_sin);
+    READ(Rdata, V_space);
+    HREAD(Rdata, Data_ein);
+    -- insert data protocol here
+    Data_in <= Data_din;
+    Data_in_valid <= Data_vin;
+    Data_in_start <= Data_sin(0);
+    Data_in_cycles <= Data_in_cycles + TO_INTEGER(UNSIGNED(Data_sin));
+    Data_in_end <= Data_ein(0);
+    
+    WAIT UNTIL FALLING_EDGE(Clk);
     
     WHILE NOT ENDFILE(Test_file) loop
         -- read line from file
         READLINE(Test_file, Rdata);
+        READ(Rdata, Cur_tc);
+        READ(Rdata, V_space);
+        IF (Cur_tc /= Test_cases(tc_plc)) THEN
+            IF (tc_plc > 0) THEN
+                IF (Cur_tc /= Test_cases(tc_plc - 1)) THEN
+                    Test_cases(tc_plc) <= Cur_tc;
+                    tc_plc := tc_plc + 1;
+                END IF;
+            ELSE
+                Test_cases(tc_plc) <= Cur_tc;
+                tc_plc := tc_plc + 1;
+            END IF;
+        END IF;
         HREAD(Rdata, Data_din);
         READ(Rdata, V_space);
         HREAD(Rdata, Data_vin);
@@ -189,6 +247,7 @@ BEGIN
         Data_in <= Data_din;
         Data_in_valid <= Data_vin;
         Data_in_start <= Data_sin(0);
+        Data_in_cycles <= Data_in_cycles + TO_INTEGER(UNSIGNED(Data_sin));
         Data_in_end <= Data_ein(0);
         
         -- Wait for rising edge to change data
@@ -223,15 +282,19 @@ MODULE_RESULTS: PROCESS
     VARIABLE Data_vout    : STD_LOGIC_VECTOR(data_width - 1 DOWNTO 0);
     VARIABLE V_space      : CHARACTER := ' ';
     VARIABLE Started      : STD_LOGIC := '0';
+    VARIABLE Tc_plc       : INTEGER := -1;
 BEGIN
     IF (Data_out_start = '1') THEN
         Started := '1';
+        Tc_plc := Tc_plc + 1;
     END IF;
     IF (Started = '1') THEN
         Data_dout := Data_out;
         Data_vout := Data_out_valid;
         Data_sout := (0=>Data_out_start, OTHERS => '0');
         Data_eout := (0=>Data_out_end, OTHERS => '0');
+        WRITE(Buff, Test_cases(Tc_plc));
+        WRITE(Buff, V_space);
         WRITE(Buff, HSTR(Data_dout));
         WRITE(Buff, V_space);
         WRITE(Buff, HSTR(Data_vout));
@@ -252,6 +315,8 @@ BEGIN
         Data_vout := Data_out_valid;
         Data_sout := (0=>Data_out_start, OTHERS => '0');
         Data_eout := (0=>Data_out_end, OTHERS => '0');
+        WRITE(Buff, Test_cases(Tc_plc));
+        WRITE(Buff, V_space);
         WRITE(Buff, HSTR(Data_dout));
         WRITE(Buff, V_space);
         WRITE(Buff, HSTR(Data_vout));
@@ -260,6 +325,13 @@ BEGIN
         WRITE(Buff, V_space);
         WRITE(Buff, HSTR(Data_eout));
         WRITELINE(Data_output, Buff);
+        started := '0';
+        Data_out_cycles <= Data_out_cycles + 1;
+        
+    END IF;
+    
+    
+    IF ((Data_out_cycles = Data_in_cycles) and (Data_out_cycles > 0)) THEN
         FILE_CLOSE(Data_output);
         WAIT;
     END IF;
