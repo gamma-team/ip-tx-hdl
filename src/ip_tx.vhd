@@ -374,12 +374,14 @@ BEGIN
                                 ELSE
                                     p0_buf_counter := p0_buf_counter + 1;
                                 END IF;
-                                p0_end_counter := p0_end_counter - 1;
-                                IF p0_end_counter = 1 THEN
-                                    p0_data_in_end <= '1';
+                                IF p0_end_counter > 0 THEN
                                     p0_end_counter := p0_end_counter - 1;
-                                    p0_buf_counter := (OTHERS => '0');
-                                    p0_ip_pkt_len := (OTHERS => '0');
+                                    IF p0_end_counter = 1 THEN
+                                        p0_data_in_end <= '1';
+                                        p0_end_counter := p0_end_counter - 1;
+                                        p0_buf_counter := (OTHERS => '0');
+                                        p0_ip_pkt_len := (OTHERS => '0');
+                                    END IF;
                                 END IF;
                         END CASE;
                         p0_len_read := p0_len_read + 1;
