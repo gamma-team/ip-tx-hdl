@@ -89,7 +89,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_ip_addr_dst_lo : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     SIGNAL p0_len_read_place : UNSIGNED(15 DOWNTO 0);
-    SIGNAL p0_end_counter_place : UNSIGNED(4 DOWNTO 0);
+    SIGNAL p0_end_counter_place : UNSIGNED(5 DOWNTO 0);
 
     -- May need new pipeline stage to get things to line up
     SIGNAL p1_data_in : DATA_BUS;
