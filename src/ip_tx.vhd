@@ -378,8 +378,8 @@ BEGIN
                                 IF p0_end_counter = 1 THEN
                                     p0_data_in_end <= '1';
                                     p0_end_counter := p0_end_counter - 1;
-                                    p0_buf_counter := 0;
-                                    p0_ip_pkt_len <= (OTHERS => '0');
+                                    p0_buf_counter := (OTHERS => '0');
+                                    p0_ip_pkt_len := (OTHERS => '0');
                                 END IF;
                         END CASE;
                         p0_len_read := p0_len_read + 1;
@@ -419,7 +419,7 @@ BEGIN
                 END IF;
 
                 IF p0_data_in_end = '1' THEN
-                    p0_len_read_place <= 0;
+                    p0_len_read_place <= (OTHERS => '0');
                 ELSE
                     p0_len_read_place <= p0_len_read;
                 END IF;
@@ -437,4 +437,3 @@ BEGIN
     Data_out_end <= p0_data_in_end;
     Data_out_err <= p1_data_in_err;
 END ARCHITECTURE;
-
