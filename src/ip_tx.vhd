@@ -110,7 +110,7 @@ BEGIN
         VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
         VARIABLE chk_accum: UNSIGNED(20 DOWNTO 0);
         VARIABLE p0_buf_counter : UNSIGNED(4 DOWNTO 0) := (OTHERS => '0');
-        VARIABLE p0_end_counter : UNSIGNED(4 DOWNTO 0);
+        VARIABLE p0_end_counter : UNSIGNED(5 DOWNTO 0);
         VARIABLE p0_ip_pkt_len : UNSIGNED(15 DOWNTO 0);
     BEGIN
         IF rising_edge(Clk) THEN
@@ -378,6 +378,8 @@ BEGIN
                                 IF p0_end_counter = 1 THEN
                                     p0_data_in_end <= '1';
                                     p0_end_counter := p0_end_counter - 1;
+                                    p0_buf_counter := 0;
+                                    p0_ip_pkt_len <= (OTHERS => '0');
                                 END IF;
                         END CASE;
                         p0_len_read := p0_len_read + 1;
@@ -416,7 +418,11 @@ BEGIN
                         + UNSIGNED'(""&Data_in_valid(0));
                 END IF;
 
-                p0_len_read_place <= p0_len_read;
+                IF p0_data_in_end = '1' THEN
+                    p0_len_read_place <= 0;
+                ELSE
+                    p0_len_read_place <= p0_len_read;
+                END IF;
                 p0_end_counter_place <= p0_end_counter;
             END IF;
         END IF;
