@@ -196,11 +196,6 @@ BEGIN
 
                 p0_end_counter_place <= (OTHERS => '0');
 
-                p0_data_in <= (OTHERS => x"00");
-                p0_data_in_valid <= (OTHERS => '0');
-                p0_data_in_start <= '0';
-                p0_data_in_end <= '0';
-                p0_data_in_err <= '0';
                 p0_len_read_sig <= (OTHERS => '0');
                 p0_chk_accum_sig <= (OTHERS => '0');
 
@@ -949,7 +944,7 @@ BEGIN
                 p5_data_in_err <= p4_data_in_err;
                 p6_data_in_err <= p5_data_in_err;
                 p7_data_in_err <= p6_data_in_err;
-                p8_data_in_err <= p7_data_in_err;
+                --p8_data_in_err <= p7_data_in_err;
 
                 p1_chk_accum_sig <= p0_chk_accum_sig;
                 p2_chk_accum_sig <= p1_chk_accum_sig;
