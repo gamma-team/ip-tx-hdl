@@ -264,12 +264,12 @@ BEGIN
                     + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
                     + UNSIGNED'(""&p0_data_in_valid(0));
                 p1_len_read_sig <= p0_len_read_sig + UNSIGNED'(""&p0_data_in_valid(0));
-                p2_len_read_sig <= p1_len_read_sig + UNSIGNED'(""&p0_data_in_valid(1));
-                p3_len_read_sig <= p2_len_read_sig + UNSIGNED'(""&p0_data_in_valid(2));
-                p4_len_read_sig <= p3_len_read_sig + UNSIGNED'(""&p0_data_in_valid(3));
-                p5_len_read_sig <= p4_len_read_sig + UNSIGNED'(""&p0_data_in_valid(4));
-                p6_len_read_sig <= p5_len_read_sig + UNSIGNED'(""&p0_data_in_valid(5));
-                p7_len_read_sig <= p6_len_read_sig + UNSIGNED'(""&p0_data_in_valid(6));
+                p2_len_read_sig <= p1_len_read_sig + UNSIGNED'(""&p1_data_in_valid(1));
+                p3_len_read_sig <= p2_len_read_sig + UNSIGNED'(""&p2_data_in_valid(2));
+                p4_len_read_sig <= p3_len_read_sig + UNSIGNED'(""&p3_data_in_valid(3));
+                p5_len_read_sig <= p4_len_read_sig + UNSIGNED'(""&p4_data_in_valid(4));
+                p6_len_read_sig <= p5_len_read_sig + UNSIGNED'(""&p5_data_in_valid(5));
+                p7_len_read_sig <= p6_len_read_sig + UNSIGNED'(""&p6_data_in_valid(6));
 
                 -- For reset on receiving end
                 IF p0_data_in_end = '1' THEN
