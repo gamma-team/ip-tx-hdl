@@ -324,7 +324,7 @@ BEGIN
                         WHEN 8 =>
                             --p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_lo);
                             IF p0_data_in(0) /= UDP_PROTO THEN
-                                p0_data_in_err <= '1'; --Insert new error here
+                                --p0_data_in_err <= '1'; --Insert new error here
                             END IF;
                             p0_buf_counter <= (p0_buf_counter + UNSIGNED'(""&p0_data_in_valid(7))
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
@@ -783,6 +783,8 @@ BEGIN
                             p8_data_in(5) <= ip_addr_src_hi(7 DOWNTO 0);
                             p8_data_in(6) <= ip_addr_src_lo(15 DOWNTO 8);
                             p8_data_in(7) <= ip_addr_src_lo(7 DOWNTO 0);
+                            p8_chk_accum_sig <= (OTHERS => '0');
+                            ip_pkt_len <= (OTHERS => '0');
                             p8_data_in_start <= '0';
                             p8_data_in_valid <= (OTHERS => '1');
                             p8_output_counter <= p8_output_counter + 1;
@@ -826,21 +828,21 @@ BEGIN
                             ELSIF valid_buf(0) <= '1' THEN
                                 buf_out_counter <= "000001";
                             END IF;
-                            IF valid_buf(3) <= '0' THEN
-                                p8_output_counter <= p8_output_counter + 2;
-                                p8_data_in_end <= '1';
+                            --IF valid_buf(3) <= '0' THEN
+                            --    p8_output_counter <= p8_output_counter + 2;
+                            --    p8_data_in_end <= '1';
 
-                                buf <= (OTHERS => x"00");
-                                valid_buf <= (OTHERS => '0');
-                                p0_buf_counter <= (OTHERS => '0');
-                                buf_out_counter <= (OTHERS => '0');
-                                p0_len_read_sig <= (OTHERS => '0');
-                                p8_chk_accum_sig <= (OTHERS => '0');
-                                ip_pkt_len <= (OTHERS => '0');
-                                ip_pkt_len_valid <= '0';
-                            ELSE
+                            --    buf <= (OTHERS => x"00");
+                            --    valid_buf <= (OTHERS => '0');
+                            --    p0_buf_counter <= (OTHERS => '0');
+                            --    buf_out_counter <= (OTHERS => '0');
+                            --    p0_len_read_sig <= (OTHERS => '0');
+                            --    p8_chk_accum_sig <= (OTHERS => '0');
+                            --    ip_pkt_len <= (OTHERS => '0');
+                            --    ip_pkt_len_valid <= '0';
+                            --ELSE
                                 p8_output_counter <= p8_output_counter + 1;
-                            END IF;
+                            --END IF;
                         WHEN 3 =>
                             -- TODO: handle slow data? (buffer shouldn't empty)
                             -- Tuned for speed efficiency, otherwise use variables
@@ -920,21 +922,20 @@ BEGIN
                             p8_data_in_err <= '0';
                             buf <= (OTHERS => x"00");
 
-                            --valid_buf <= (OTHERS => '0');
-                            --p0_buf_counter <= (OTHERS => '0');
-                            --buf_out_counter <= (OTHERS => '0');
-                            --p0_len_read_sig <= (OTHERS => '0');
-                            --p8_chk_accum_sig <= (OTHERS => '0');
-                            --ip_pkt_len <= (OTHERS => '0');
-                            --ip_pkt_len_valid <= '0';
-                            --p0_data_in_valid <= (OTHERS => '0');
-                            --p1_data_in_valid <= (OTHERS => '0');
-                            --p2_data_in_valid <= (OTHERS => '0');
-                            --p3_data_in_valid <= (OTHERS => '0');
-                            --p4_data_in_valid <= (OTHERS => '0');
-                            --p5_data_in_valid <= (OTHERS => '0');
-                            --p6_data_in_valid <= (OTHERS => '0');
-                            --p7_data_in_valid <= (OTHERS => '0');
+                            valid_buf <= (OTHERS => '0');
+                            p0_buf_counter <= (OTHERS => '0');
+                            buf_out_counter <= (OTHERS => '0');
+                            p0_len_read_sig <= (OTHERS => '0');
+                            p8_chk_accum_sig <= (OTHERS => '0');
+                            ip_pkt_len <= (OTHERS => '0');
+                            ip_pkt_len_valid <= '0';
+                            p1_data_in_valid <= (OTHERS => '0');
+                            p2_data_in_valid <= (OTHERS => '0');
+                            p3_data_in_valid <= (OTHERS => '0');
+                            p4_data_in_valid <= (OTHERS => '0');
+                            p5_data_in_valid <= (OTHERS => '0');
+                            p6_data_in_valid <= (OTHERS => '0');
+                            p7_data_in_valid <= (OTHERS => '0');
                     END CASE;
                 END IF;
 
