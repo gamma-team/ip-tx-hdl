@@ -285,12 +285,6 @@ BEGIN
                 p6_len_read_sig <= p5_len_read_sig + UNSIGNED'(""&p5_data_in_valid(5));
                 p7_len_read_sig <= p6_len_read_sig + UNSIGNED'(""&p6_data_in_valid(6));
 
-                -- For reset on receiving end
-                IF p0_data_in_end = '1' THEN
-                    p0_len_read_sig <= (OTHERS => '0');
-                    --p0_chk_accum_sig <= (OTHERS => '0');
-                END IF;
-
                 --p1_chk_accum_sig <= (OTHERS => '0');
                 --p2_chk_accum_sig <= p1_chk_accum_sig;
                 --p3_chk_accum_sig <= p2_chk_accum_sig;
@@ -769,8 +763,6 @@ BEGIN
                             --p5_chk_accum_sig <= (OTHERS => '0');
                             --p6_chk_accum_sig <= (OTHERS => '0');
                             --p7_chk_accum_sig <= (OTHERS => '0');
-                            p8_chk_accum_sig <= (OTHERS => '0');
-                            ip_pkt_len <= (OTHERS => '0');
                             p8_data_in_start <= '1';
                             p8_data_in_valid <= (OTHERS => '1');
                             p8_output_counter <= p8_output_counter + 1;
@@ -837,10 +829,15 @@ BEGIN
                             IF valid_buf(3) <= '0' THEN
                                 p8_output_counter <= p8_output_counter + 2;
                                 p8_data_in_end <= '1';
+
                                 buf <= (OTHERS => x"00");
                                 valid_buf <= (OTHERS => '0');
                                 p0_buf_counter <= (OTHERS => '0');
                                 buf_out_counter <= (OTHERS => '0');
+                                p0_len_read_sig <= (OTHERS => '0');
+                                p8_chk_accum_sig <= (OTHERS => '0');
+                                ip_pkt_len <= (OTHERS => '0');
+                                ip_pkt_len_valid <= '0';
                             ELSE
                                 p8_output_counter <= p8_output_counter + 1;
                             END IF;
@@ -884,10 +881,15 @@ BEGIN
                                 ) = '0' THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
+
                                 buf <= (OTHERS => x"00");
                                 valid_buf <= (OTHERS => '0');
                                 p0_buf_counter <= (OTHERS => '0');
                                 buf_out_counter <= (OTHERS => '0');
+                                p0_len_read_sig <= (OTHERS => '0');
+                                p8_chk_accum_sig <= (OTHERS => '0');
+                                ip_pkt_len <= (OTHERS => '0');
+                                ip_pkt_len_valid <= '0';
                             ELSE
                                 buf_out_counter <= (buf_out_counter + 8) ;
                             END IF;
@@ -916,6 +918,23 @@ BEGIN
                             p8_data_in_valid <= (OTHERS => '0');
                             p8_data_in_end <= '0';
                             p8_data_in_err <= '0';
+                            buf <= (OTHERS => x"00");
+
+                            --valid_buf <= (OTHERS => '0');
+                            --p0_buf_counter <= (OTHERS => '0');
+                            --buf_out_counter <= (OTHERS => '0');
+                            --p0_len_read_sig <= (OTHERS => '0');
+                            --p8_chk_accum_sig <= (OTHERS => '0');
+                            --ip_pkt_len <= (OTHERS => '0');
+                            --ip_pkt_len_valid <= '0';
+                            --p0_data_in_valid <= (OTHERS => '0');
+                            --p1_data_in_valid <= (OTHERS => '0');
+                            --p2_data_in_valid <= (OTHERS => '0');
+                            --p3_data_in_valid <= (OTHERS => '0');
+                            --p4_data_in_valid <= (OTHERS => '0');
+                            --p5_data_in_valid <= (OTHERS => '0');
+                            --p6_data_in_valid <= (OTHERS => '0');
+                            --p7_data_in_valid <= (OTHERS => '0');
                     END CASE;
                 END IF;
 
