@@ -198,6 +198,7 @@ BEGIN
             IF (Cur_tc /= Test_cases(tc_plc - 1)) THEN
                 Test_cases(tc_plc) <= Cur_tc;
                 tc_plc := tc_plc + 1;
+                
             END IF;
         ELSE
             Test_cases(tc_plc) <= Cur_tc;
@@ -230,6 +231,16 @@ BEGIN
                 IF (Cur_tc /= Test_cases(tc_plc - 1)) THEN
                     Test_cases(tc_plc) <= Cur_tc;
                     tc_plc := tc_plc + 1;
+                    Data_in           <= (OTHERS => '0');
+                    Data_in_valid     <= (OTHERS => '0');
+                    Data_in_start     <= '0';
+                    Data_in_end       <= '0';
+                    Data_in_err       <= '0';
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
                 END IF;
             ELSE
                 Test_cases(tc_plc) <= Cur_tc;
