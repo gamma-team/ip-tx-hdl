@@ -302,25 +302,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p0_data_in(0);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p0_data_in(0);
-                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p0_data_in(0);
-                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p0_data_in(0);
-                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_lo);
                             IF p0_data_in(0) /= UDP_PROTO THEN
                                 p0_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -370,25 +370,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p1_data_in(1);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p1_data_in(1);
-                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p1_data_in(1);
-                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p1_data_in(1);
-                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p1_data_in(1) /= UDP_PROTO THEN
                                 p1_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -423,25 +423,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p2_data_in(2);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p2_data_in(2);
-                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p2_data_in(2);
-                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p2_data_in(2);
-                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p2_data_in(2) /= UDP_PROTO THEN
                                 p2_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -476,25 +476,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p3_data_in(3);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p3_data_in(3);
-                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p3_data_in(3);
-                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p3_data_in(3);
-                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p3_data_in(3) /= UDP_PROTO THEN
                                 p3_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -529,25 +529,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p4_data_in(4);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p4_data_in(4);
-                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p4_data_in(4);
-                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p4_data_in(4);
-                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p4_data_in(4) /= UDP_PROTO THEN
                                 p4_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -582,25 +582,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p5_data_in(5);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p5_data_in(5);
-                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p5_data_in(5);
-                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p5_data_in(5);
-                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p5_data_in(5) /= UDP_PROTO THEN
                                 p5_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -635,25 +635,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p6_data_in(6);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p6_data_in(6);
-                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p6_data_in(6);
-                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p6_data_in(6);
-                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p6_data_in(6) /= UDP_PROTO THEN
                                 p6_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -688,25 +688,25 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p7_data_in(7);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                             ip_addr_src_lo(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p7_data_in(7);
-                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                             ip_addr_dst_hi(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p7_data_in(7);
-                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                             ip_addr_dst_lo(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p7_data_in(7);
-                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                             IF p7_data_in(7) /= UDP_PROTO THEN
                                 p7_data_in_err <= '1'; --Insert new error here
                             END IF;
@@ -727,8 +727,10 @@ BEGIN
                             valid_buf(TO_INTEGER(p7_buf_counter)) <= '1';
 
                             --Enable for Stage 8
-                            p8_enable <= '1';
-                            p8_chk_accum_sig <= p8_chk_accum_sig + x"8511";
+                            IF p8_enable = '0' THEN
+                                p8_enable <= '1';
+                                p8_chk_accum_sig <= p8_chk_accum_sig + x"8511";
+                            END IF;
                     END CASE;
                 END IF;
 
