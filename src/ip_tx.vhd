@@ -279,6 +279,7 @@ BEGIN
 
                 -- Start Stage 0 of Pipeline
                 IF p0_data_in_valid(0) = '1' THEN
+                    p1_chk_accum_sig <= (OTHERS => '0');
                     -- Nothing has been added to p0_len_read_sig yet first time
                     CASE TO_INTEGER(p0_len_read_sig) IS
                     -- Source Address
@@ -287,23 +288,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p0_data_in(0);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p0_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_hi);
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p0_data_in(0);
-                            p0_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_lo);
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p0_data_in(0);
-                            p0_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_hi);
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p0_data_in(0);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p0_data_in(0);
-                            p0_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_lo);
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p0_data_in(0) /= UDP_PROTO THEN
@@ -323,7 +324,7 @@ BEGIN
                                 UNSIGNED(p0_data_in(0)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p0_data_in(0);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p0_chk_accum_sig <= "00000"&UNSIGNED(ip_pkt_len) +
+                            p1_chk_accum_sig <= "00000"&UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p0_data_in(0)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -344,6 +345,7 @@ BEGIN
 
                 -- Start Stage 1 of Pipeline
                 IF p1_data_in_valid(1) = '1' THEN
+                    p2_chk_accum_sig <= p1_chk_accum_sig;
                     CASE TO_INTEGER(p1_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -351,23 +353,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p1_data_in(1);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p1_data_in(1);
-                            p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p1_data_in(1);
-                            p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p1_data_in(1);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p1_data_in(1);
-                            p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p1_data_in(1) /= UDP_PROTO THEN
@@ -387,7 +389,7 @@ BEGIN
                                 UNSIGNED(p1_data_in(1)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p1_data_in(1);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(
+                            p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p1_data_in(1)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -408,6 +410,7 @@ BEGIN
 
                 -- Start Stage 2 of Pipeline
                 IF p2_data_in_valid(2) = '1' THEN
+                    p3_chk_accum_sig <= p2_chk_accum_sig;
                     CASE TO_INTEGER(p2_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -415,23 +418,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p2_data_in(2);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p2_data_in(2);
-                            p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p2_data_in(2);
-                            p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p2_data_in(2);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p2_data_in(2);
-                            p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p2_data_in(2) /= UDP_PROTO THEN
@@ -451,7 +454,7 @@ BEGIN
                                 UNSIGNED(p2_data_in(2)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p2_data_in(2);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(
+                            p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p2_data_in(2)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -472,6 +475,7 @@ BEGIN
 
                 -- Start Stage 3 of Pipeline
                 IF p3_data_in_valid(3) = '1' THEN
+                    p4_chk_accum_sig <= p3_chk_accum_sig;
                     CASE TO_INTEGER(p3_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -479,23 +483,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p3_data_in(3);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p3_data_in(3);
-                            p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p3_data_in(3);
-                            p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p3_data_in(3);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p3_data_in(3);
-                            p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p3_data_in(3) /= UDP_PROTO THEN
@@ -515,7 +519,7 @@ BEGIN
                                 UNSIGNED(p3_data_in(3)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p3_data_in(3);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(
+                            p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p3_data_in(3)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -536,6 +540,7 @@ BEGIN
 
                 -- Start Stage 4 of Pipeline
                 IF p4_data_in_valid(4) = '1' THEN
+                    p5_chk_accum_sig <= p4_chk_accum_sig;
                     CASE TO_INTEGER(p4_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -543,23 +548,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p4_data_in(4);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p4_data_in(4);
-                            p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p4_data_in(4);
-                            p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p4_data_in(4);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p4_data_in(4);
-                            p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p4_data_in(4) /= UDP_PROTO THEN
@@ -579,7 +584,7 @@ BEGIN
                                 UNSIGNED(p4_data_in(4)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p4_data_in(4);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(
+                            p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p4_data_in(4)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -600,6 +605,7 @@ BEGIN
 
                 -- Start Stage 5 of Pipeline
                 IF p5_data_in_valid(5) = '1' THEN
+                    p6_chk_accum_sig <= p5_chk_accum_sig;
                     CASE TO_INTEGER(p5_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -607,23 +613,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p5_data_in(5);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p5_data_in(5);
-                            p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p5_data_in(5);
-                            p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p5_data_in(5);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p5_data_in(5);
-                            p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p5_data_in(5) /= UDP_PROTO THEN
@@ -643,7 +649,7 @@ BEGIN
                                 UNSIGNED(p5_data_in(5)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p5_data_in(5);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(
+                            p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p5_data_in(5)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -664,6 +670,7 @@ BEGIN
 
                 -- Start Stage 6 of Pipeline
                 IF p6_data_in_valid(6) = '1' THEN
+                    p7_chk_accum_sig <= p6_chk_accum_sig;
                     CASE TO_INTEGER(p6_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -671,23 +678,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p6_data_in(6);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p6_data_in(6);
-                            p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p6_data_in(6);
-                            p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p6_data_in(6);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p6_data_in(6);
-                            p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p6_data_in(6) /= UDP_PROTO THEN
@@ -707,7 +714,7 @@ BEGIN
                                 UNSIGNED(p6_data_in(6)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p6_data_in(6);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(
+                            p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p6_data_in(6)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -728,6 +735,7 @@ BEGIN
 
                 -- Start Stage 7 of Pipeline
                 IF p7_data_in_valid(7) = '1' THEN
+                    p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig;
                     CASE TO_INTEGER(p7_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -735,23 +743,23 @@ BEGIN
                         WHEN 1 =>
                             ip_addr_src_hi(7 DOWNTO 0) <= p7_data_in(7);
                             -- Probably need to convert ip_addr_src_hi, etc. to UNSIGNED
-                            p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_hi);
                         WHEN 2 =>
                             ip_addr_src_lo(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 3 =>
                             ip_addr_src_lo(7 DOWNTO 0) <= p7_data_in(7);
-                            p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_src_lo);
                         -- Destination Address
                         WHEN 4 =>
                             ip_addr_dst_hi(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 5 =>
                             ip_addr_dst_hi(7 DOWNTO 0) <= p7_data_in(7);
-                            p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_hi);
                         WHEN 6 =>
                             ip_addr_dst_lo(15 DOWNTO 8) <= p7_data_in(7);
                         WHEN 7 =>
                             ip_addr_dst_lo(7 DOWNTO 0) <= p7_data_in(7);
-                            p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(ip_addr_dst_lo);
                         -- Protocol
                         WHEN 8 =>
                             IF p7_data_in(7) /= UDP_PROTO THEN
@@ -771,7 +779,7 @@ BEGIN
                                 UNSIGNED(p7_data_in(7)) + 20;
                             buf(TO_INTEGER(buf_counter)) <= p7_data_in(7);
                             valid_buf(TO_INTEGER(buf_counter)) <= '1';
-                            p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(
+                            p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p7_data_in(7)) + 20;
                             ip_pkt_len_valid <= '1';
                             IF buf_counter = "111111" THEN
@@ -790,7 +798,7 @@ BEGIN
 
                             --Enable for Stage 8
                             p8_enable <= '1';
-                            p7_chk_accum_sig <= p7_chk_accum_sig + x"8511";
+                            p8_chk_accum_sig <= p8_chk_accum_sig + x"8511";
                     END CASE;
                 END IF;
 
@@ -900,39 +908,39 @@ BEGIN
                             -- Tuned for speed efficiency, otherwise use variables
                             p8_data_in(0) <= buf(TO_INTEGER(buf_out_counter));
                             p8_data_in(1) <= buf((TO_INTEGER(buf_out_counter)
-                                +1) mod 64);
+                                +1) );
                             p8_data_in(2) <= buf((TO_INTEGER(buf_out_counter)
-                                +2) mod 64);
+                                +2) );
                             p8_data_in(3) <= buf((TO_INTEGER(buf_out_counter)
-                                +3) mod 64);
+                                +3) );
                             p8_data_in(4) <= buf((TO_INTEGER(buf_out_counter)
-                                +4) mod 64);
+                                +4) );
                             p8_data_in(5) <= buf((TO_INTEGER(buf_out_counter)
-                                +5) mod 64);
+                                +5) );
                             p8_data_in(6) <= buf((TO_INTEGER(buf_out_counter)
-                                +6) mod 64);
+                                +6) );
                             p8_data_in(7) <= buf((TO_INTEGER(buf_out_counter)
-                                +7) mod 64);
+                                +7) );
 
                             p8_data_in_valid(0) <= valid_buf(TO_INTEGER(
                                 buf_out_counter));
                             p8_data_in_valid(1) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+1) mod 64);
+                                buf_out_counter)+1) );
                             p8_data_in_valid(2) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+2) mod 64);
+                                buf_out_counter)+2) );
                             p8_data_in_valid(3) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+3) mod 64);
+                                buf_out_counter)+3) );
                             p8_data_in_valid(4) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+4) mod 64);
+                                buf_out_counter)+4) );
                             p8_data_in_valid(5) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+5) mod 64);
+                                buf_out_counter)+5) );
                             p8_data_in_valid(6) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+6) mod 64);
+                                buf_out_counter)+6) );
                             p8_data_in_valid(7) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+7) mod 64);
+                                buf_out_counter)+7) );
 
                             IF valid_buf((TO_INTEGER(buf_out_counter)+7)
-                                mod 64) = '0' THEN
+                                ) = '0' THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
                                 buf <= (OTHERS => x"00");
@@ -940,26 +948,26 @@ BEGIN
                                 buf_counter <= (OTHERS => '0');
                                 buf_out_counter <= (OTHERS => '0');
                             ELSE
-                                buf_out_counter <= (buf_out_counter + 8) mod 64;
+                                buf_out_counter <= (buf_out_counter + 8) ;
                             END IF;
 
                             buf(TO_INTEGER(buf_out_counter)) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+1) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+2) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+3) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+4) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+5) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+6) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+7) ) <= x"00";
 
                             valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+1) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+2) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+3) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+4) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+5) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+6) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+7) ) <= '0';
 
                         WHEN OTHERS =>
                             p8_enable <= '0';
@@ -1004,14 +1012,14 @@ BEGIN
                 p7_data_in_err <= p6_data_in_err;
                 --p8_data_in_err <= p7_data_in_err;
 
-                p1_chk_accum_sig <= p0_chk_accum_sig;
-                p2_chk_accum_sig <= p1_chk_accum_sig;
-                p3_chk_accum_sig <= p2_chk_accum_sig;
-                p4_chk_accum_sig <= p3_chk_accum_sig;
-                p5_chk_accum_sig <= p4_chk_accum_sig;
-                p6_chk_accum_sig <= p5_chk_accum_sig;
-                p7_chk_accum_sig <= p6_chk_accum_sig;
-                p8_chk_accum_sig <= p7_chk_accum_sig;
+                --p1_chk_accum_sig <= p0_chk_accum_sig;
+                --p2_chk_accum_sig <= p1_chk_accum_sig;
+                --p3_chk_accum_sig <= p2_chk_accum_sig;
+                --p4_chk_accum_sig <= p3_chk_accum_sig;
+                --p5_chk_accum_sig <= p4_chk_accum_sig;
+                --p6_chk_accum_sig <= p5_chk_accum_sig;
+                --p7_chk_accum_sig <= p6_chk_accum_sig;
+                --p8_chk_accum_sig <= p7_chk_accum_sig;
             END IF;
         END IF;
     END PROCESS;
