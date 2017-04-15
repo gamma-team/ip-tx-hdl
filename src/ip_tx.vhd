@@ -922,20 +922,94 @@ BEGIN
                             p8_data_in_err <= '0';
                             buf <= (OTHERS => x"00");
 
+                            buf <= (OTHERS => x"00");
                             valid_buf <= (OTHERS => '0');
-                            p0_buf_counter <= (OTHERS => '0');
                             buf_out_counter <= (OTHERS => '0');
-                            p0_len_read_sig <= (OTHERS => '0');
-                            p8_chk_accum_sig <= (OTHERS => '0');
+                            end_counter <= (OTHERS => '0');
+
+                            ip_hdr_len <= x"4500";
                             ip_pkt_len <= (OTHERS => '0');
+                            ip_id <= (OTHERS => '0');
+                            ip_flag_frag <= (OTHERS => '0');
+                            ip_ttl_proto <= x"4011";
+                            ip_hdr_chk <= (OTHERS => '0');
+                            ip_addr_src_hi <= (OTHERS => '0');
+                            ip_addr_src_lo <= (OTHERS => '0');
+                            ip_addr_dst_hi <= (OTHERS => '0');
+                            ip_addr_dst_lo <= (OTHERS => '0');
+
                             ip_pkt_len_valid <= '0';
+
+                            p0_end_counter_place <= (OTHERS => '0');
+
+                            p0_len_read_sig <= (OTHERS => '0');
+                            --p0_chk_accum_sig <= (OTHERS => '0');
+                            p0_buf_counter <= (OTHERS => '0');
+
+                            p1_data_in <= (OTHERS => x"00");
                             p1_data_in_valid <= (OTHERS => '0');
+                            p1_data_in_end <= '0';
+                            p1_data_in_err <= '0';
+                            p1_len_read_sig <= (OTHERS => '0');
+                            --p1_chk_accum_sig <= (OTHERS => '0');
+                            p1_buf_counter <= (OTHERS => '0');
+
+                            p2_data_in <= (OTHERS => x"00");
                             p2_data_in_valid <= (OTHERS => '0');
+                            p2_data_in_end <= '0';
+                            p2_data_in_err <= '0';
+                            p2_len_read_sig <= (OTHERS => '0');
+                            --p2_chk_accum_sig <= (OTHERS => '0');
+                            p2_buf_counter <= (OTHERS => '0');
+
+                            p3_data_in <= (OTHERS => x"00");
                             p3_data_in_valid <= (OTHERS => '0');
+                            p3_data_in_end <= '0';
+                            p3_data_in_err <= '0';
+                            p3_len_read_sig <= (OTHERS => '0');
+                            --p3_chk_accum_sig <= (OTHERS => '0');
+                            p3_buf_counter <= (OTHERS => '0');
+
+                            p4_data_in <= (OTHERS => x"00");
                             p4_data_in_valid <= (OTHERS => '0');
+                            p4_data_in_end <= '0';
+                            p4_data_in_err <= '0';
+                            p4_len_read_sig <= (OTHERS => '0');
+                            --p4_chk_accum_sig <= (OTHERS => '0');
+                            p4_buf_counter <= (OTHERS => '0');
+
+                            p5_data_in <= (OTHERS => x"00");
                             p5_data_in_valid <= (OTHERS => '0');
+                            p5_data_in_end <= '0';
+                            p5_data_in_err <= '0';
+                            p5_len_read_sig <= (OTHERS => '0');
+                            --p5_chk_accum_sig <= (OTHERS => '0');
+                            p5_buf_counter <= (OTHERS => '0');
+
+                            p6_data_in <= (OTHERS => x"00");
                             p6_data_in_valid <= (OTHERS => '0');
+                            p6_data_in_end <= '0';
+                            p6_data_in_err <= '0';
+                            p6_len_read_sig <= (OTHERS => '0');
+                            --p6_chk_accum_sig <= (OTHERS => '0');
+                            p6_buf_counter <= (OTHERS => '0');
+
+                            p7_data_in <= (OTHERS => x"00");
                             p7_data_in_valid <= (OTHERS => '0');
+                            p7_data_in_end <= '0';
+                            p7_data_in_err <= '0';
+                            p7_len_read_sig <= (OTHERS => '0');
+                            --p7_chk_accum_sig <= (OTHERS => '0');
+                            p7_buf_counter <= (OTHERS => '0');
+
+                            p8_data_in <= (OTHERS => x"00");
+                            p8_data_in_valid <= (OTHERS => '0');
+                            p8_data_in_start <= '0';
+                            p8_data_in_end <= '0';
+                            p8_data_in_err <= '0';
+                            p8_enable <= '0';
+                            p8_output_counter <= (OTHERS => '0');
+                            p8_chk_accum_sig <= (OTHERS => '0');
                     END CASE;
                 END IF;
 
