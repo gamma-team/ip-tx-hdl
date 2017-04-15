@@ -312,6 +312,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p0_data_in(0));
                             buf(TO_INTEGER(buf_counter)) <= p0_data_in(0);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -320,6 +321,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p0_data_in(0)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p0_data_in(0);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p0_chk_accum_sig <= "00000"&UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p0_data_in(0)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -330,6 +333,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p0_data_in(0);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -372,6 +376,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p1_data_in(1));
                             buf(TO_INTEGER(buf_counter)) <= p1_data_in(1);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -380,6 +385,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p1_data_in(1)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p1_data_in(1);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p1_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p1_data_in(1)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -390,6 +397,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p1_data_in(1);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -432,6 +440,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p2_data_in(2));
                             buf(TO_INTEGER(buf_counter)) <= p2_data_in(2);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -440,6 +449,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p2_data_in(2)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p2_data_in(2);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p2_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p2_data_in(2)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -450,6 +461,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p2_data_in(2);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -492,6 +504,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p3_data_in(3));
                             buf(TO_INTEGER(buf_counter)) <= p3_data_in(3);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -500,6 +513,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p3_data_in(3)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p3_data_in(3);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p3_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p3_data_in(3)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -510,6 +525,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p3_data_in(3);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -552,6 +568,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p4_data_in(4));
                             buf(TO_INTEGER(buf_counter)) <= p4_data_in(4);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -560,6 +577,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p4_data_in(4)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p4_data_in(4);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p4_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p4_data_in(4)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -570,6 +589,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p4_data_in(4);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -612,6 +632,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p5_data_in(5));
                             buf(TO_INTEGER(buf_counter)) <= p5_data_in(5);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -620,6 +641,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p5_data_in(5)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p5_data_in(5);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p5_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p5_data_in(5)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -630,6 +653,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p5_data_in(5);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -672,6 +696,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p6_data_in(6));
                             buf(TO_INTEGER(buf_counter)) <= p6_data_in(6);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -680,6 +705,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p6_data_in(6)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p6_data_in(6);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p6_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p6_data_in(6)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -690,6 +717,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p6_data_in(6);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -732,6 +760,7 @@ BEGIN
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p7_data_in(7));
                             buf(TO_INTEGER(buf_counter)) <= p7_data_in(7);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
@@ -740,6 +769,8 @@ BEGIN
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p7_data_in(7)) + 20;
+                            buf(TO_INTEGER(buf_counter)) <= p7_data_in(7);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             p7_chk_accum_sig <= p7_chk_accum_sig + UNSIGNED(
                                 ip_pkt_len) + UNSIGNED(p7_data_in(7)) + 20;
                             ip_pkt_len_valid <= '1';
@@ -750,6 +781,7 @@ BEGIN
                             END IF;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(buf_counter)) <= p7_data_in(7);
+                            valid_buf(TO_INTEGER(buf_counter)) <= '1';
                             IF buf_counter = "111111" THEN
                                 buf_counter <= "000000";
                             ELSE
