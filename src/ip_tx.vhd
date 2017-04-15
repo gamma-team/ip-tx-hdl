@@ -91,49 +91,42 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p1_data_in : DATA_BUS;
     SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p1_data_in_end : STD_LOGIC;
-    SIGNAL p1_data_in_err : STD_LOGIC;
     SIGNAL p1_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p1_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p2_data_in : DATA_BUS;
     SIGNAL p2_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p2_data_in_end : STD_LOGIC;
-    SIGNAL p2_data_in_err : STD_LOGIC;
     SIGNAL p2_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p2_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p3_data_in : DATA_BUS;
     SIGNAL p3_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p3_data_in_end : STD_LOGIC;
-    SIGNAL p3_data_in_err : STD_LOGIC;
     SIGNAL p3_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p3_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p4_data_in : DATA_BUS;
     SIGNAL p4_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p4_data_in_end : STD_LOGIC;
-    SIGNAL p4_data_in_err : STD_LOGIC;
     SIGNAL p4_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p4_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p5_data_in : DATA_BUS;
     SIGNAL p5_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p5_data_in_end : STD_LOGIC;
-    SIGNAL p5_data_in_err : STD_LOGIC;
     SIGNAL p5_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p5_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p6_data_in : DATA_BUS;
     SIGNAL p6_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p6_data_in_end : STD_LOGIC;
-    SIGNAL p6_data_in_err : STD_LOGIC;
     SIGNAL p6_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p6_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p7_data_in : DATA_BUS;
     SIGNAL p7_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL p7_data_in_end : STD_LOGIC;
-    SIGNAL p7_data_in_err : STD_LOGIC;
     SIGNAL p7_len_read_sig : UNSIGNED(15 DOWNTO 0);
     attribute dont_touch of p7_len_read_sig: signal is "true";
     SIGNAL p7_buf_counter : UNSIGNED(7 DOWNTO 0);
@@ -185,49 +178,42 @@ BEGIN
                 p1_data_in <= (OTHERS => x"00");
                 p1_data_in_valid <= (OTHERS => '0');
                 p1_data_in_end <= '0';
-                p1_data_in_err <= '0';
                 p1_len_read_sig <= (OTHERS => '0');
                 p1_buf_counter <= (OTHERS => '0');
 
                 p2_data_in <= (OTHERS => x"00");
                 p2_data_in_valid <= (OTHERS => '0');
                 p2_data_in_end <= '0';
-                p2_data_in_err <= '0';
                 p2_len_read_sig <= (OTHERS => '0');
                 p2_buf_counter <= (OTHERS => '0');
 
                 p3_data_in <= (OTHERS => x"00");
                 p3_data_in_valid <= (OTHERS => '0');
                 p3_data_in_end <= '0';
-                p3_data_in_err <= '0';
                 p3_len_read_sig <= (OTHERS => '0');
                 p3_buf_counter <= (OTHERS => '0');
 
                 p4_data_in <= (OTHERS => x"00");
                 p4_data_in_valid <= (OTHERS => '0');
                 p4_data_in_end <= '0';
-                p4_data_in_err <= '0';
                 p4_len_read_sig <= (OTHERS => '0');
                 p4_buf_counter <= (OTHERS => '0');
 
                 p5_data_in <= (OTHERS => x"00");
                 p5_data_in_valid <= (OTHERS => '0');
                 p5_data_in_end <= '0';
-                p5_data_in_err <= '0';
                 p5_len_read_sig <= (OTHERS => '0');
                 p5_buf_counter <= (OTHERS => '0');
 
                 p6_data_in <= (OTHERS => x"00");
                 p6_data_in_valid <= (OTHERS => '0');
                 p6_data_in_end <= '0';
-                p6_data_in_err <= '0';
                 p6_len_read_sig <= (OTHERS => '0');
                 p6_buf_counter <= (OTHERS => '0');
 
                 p7_data_in <= (OTHERS => x"00");
                 p7_data_in_valid <= (OTHERS => '0');
                 p7_data_in_end <= '0';
-                p7_data_in_err <= '0';
                 p7_len_read_sig <= (OTHERS => '0');
                 p7_buf_counter <= (OTHERS => '0');
 
@@ -279,7 +265,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p0_data_in(0) /= UDP_PROTO THEN
-                                --p0_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                             p0_buf_counter <= (p0_buf_counter + UNSIGNED'(""&p0_data_in_valid(7))
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
@@ -345,7 +331,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p1_data_in(1) /= UDP_PROTO THEN
-                                p1_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p1_data_in(1));
@@ -390,7 +376,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p2_data_in(2) /= UDP_PROTO THEN
-                                p2_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p2_data_in(2));
@@ -435,7 +421,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p3_data_in(3) /= UDP_PROTO THEN
-                                p3_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p3_data_in(3));
@@ -480,7 +466,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p4_data_in(4) /= UDP_PROTO THEN
-                                p4_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p4_data_in(4));
@@ -525,7 +511,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p5_data_in(5) /= UDP_PROTO THEN
-                                p5_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p5_data_in(5));
@@ -570,7 +556,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p6_data_in(6) /= UDP_PROTO THEN
-                                p6_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p6_data_in(6));
@@ -615,7 +601,7 @@ BEGIN
                         -- Protocol
                         WHEN 8 =>
                             IF p7_data_in(7) /= UDP_PROTO THEN
-                                p7_data_in_err <= '1'; --Insert new error here
+                                p8_data_in_err <= '1';
                             END IF;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p7_data_in(7));
@@ -727,15 +713,6 @@ BEGIN
                             IF valid_buf(3) <= '0' THEN
                                 p8_output_counter <= p8_output_counter + 2;
                                 p8_data_in_end <= '1';
-
-                                buf <= (OTHERS => x"00");
-                                valid_buf <= (OTHERS => '0');
-                                p0_buf_counter <= (OTHERS => '0');
-                                buf_out_counter <= (OTHERS => '0');
-                                p0_len_read_sig <= (OTHERS => '0');
-                                p8_chk_accum_sig <= (OTHERS => '0');
-                                ip_pkt_len <= (OTHERS => '0');
-                                ip_pkt_len_valid <= '0';
                             ELSE
                                 p8_output_counter <= p8_output_counter + 1;
                             END IF;
@@ -820,49 +797,42 @@ BEGIN
                             p1_data_in <= (OTHERS => x"00");
                             p1_data_in_valid <= (OTHERS => '0');
                             p1_data_in_end <= '0';
-                            p1_data_in_err <= '0';
                             p1_len_read_sig <= (OTHERS => '0');
                             p1_buf_counter <= (OTHERS => '0');
 
                             p2_data_in <= (OTHERS => x"00");
                             p2_data_in_valid <= (OTHERS => '0');
                             p2_data_in_end <= '0';
-                            p2_data_in_err <= '0';
                             p2_len_read_sig <= (OTHERS => '0');
                             p2_buf_counter <= (OTHERS => '0');
 
                             p3_data_in <= (OTHERS => x"00");
                             p3_data_in_valid <= (OTHERS => '0');
                             p3_data_in_end <= '0';
-                            p3_data_in_err <= '0';
                             p3_len_read_sig <= (OTHERS => '0');
                             p3_buf_counter <= (OTHERS => '0');
 
                             p4_data_in <= (OTHERS => x"00");
                             p4_data_in_valid <= (OTHERS => '0');
                             p4_data_in_end <= '0';
-                            p4_data_in_err <= '0';
                             p4_len_read_sig <= (OTHERS => '0');
                             p4_buf_counter <= (OTHERS => '0');
 
                             p5_data_in <= (OTHERS => x"00");
                             p5_data_in_valid <= (OTHERS => '0');
                             p5_data_in_end <= '0';
-                            p5_data_in_err <= '0';
                             p5_len_read_sig <= (OTHERS => '0');
                             p5_buf_counter <= (OTHERS => '0');
 
                             p6_data_in <= (OTHERS => x"00");
                             p6_data_in_valid <= (OTHERS => '0');
                             p6_data_in_end <= '0';
-                            p6_data_in_err <= '0';
                             p6_len_read_sig <= (OTHERS => '0');
                             p6_buf_counter <= (OTHERS => '0');
 
                             p7_data_in <= (OTHERS => x"00");
                             p7_data_in_valid <= (OTHERS => '0');
                             p7_data_in_end <= '0';
-                            p7_data_in_err <= '0';
                             p7_len_read_sig <= (OTHERS => '0');
                             p7_buf_counter <= (OTHERS => '0');
 
@@ -902,14 +872,9 @@ BEGIN
                 p7_data_in_end <= p6_data_in_end;
                 --p8_data_in_end <= p7_data_in_end;
 
-                p1_data_in_err <= p0_data_in_err;
-                p2_data_in_err <= p1_data_in_err;
-                p3_data_in_err <= p2_data_in_err;
-                p4_data_in_err <= p3_data_in_err;
-                p5_data_in_err <= p4_data_in_err;
-                p6_data_in_err <= p5_data_in_err;
-                p7_data_in_err <= p6_data_in_err;
-                --p8_data_in_err <= p7_data_in_err;
+                IF p0_data_in_err = '1' THEN
+                    p8_data_in_err <= '1';
+                END IF;
             END IF;
         END IF;
     END PROCESS;
