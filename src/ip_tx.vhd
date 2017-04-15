@@ -61,11 +61,11 @@ ARCHITECTURE normal OF ip_tx IS
 
     TYPE DATA_BUS IS ARRAY (width - 1 DOWNTO 0)
         OF STD_LOGIC_VECTOR(7 DOWNTO 0);
-    TYPE BUFF IS ARRAY (63 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+    TYPE BUFF IS ARRAY (127 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 
     SIGNAL buf : BUFF;
-    SIGNAL valid_buf : STD_LOGIC_VECTOR(63 DOWNTO 0);
-    SIGNAL buf_out_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL valid_buf : STD_LOGIC_VECTOR(127 DOWNTO 0);
+    SIGNAL buf_out_counter : UNSIGNED(7 DOWNTO 0);
     SIGNAL end_counter : UNSIGNED(5 DOWNTO 0);
 
     SIGNAL ip_hdr_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -92,7 +92,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p0_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p0_chk_accum_sig: signal is "true";
-    SIGNAL p0_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p0_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p1_data_in : DATA_BUS;
     SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -101,7 +101,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p1_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p1_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p1_chk_accum_sig: signal is "true";
-    SIGNAL p1_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p1_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p2_data_in : DATA_BUS;
     SIGNAL p2_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -110,7 +110,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p2_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p2_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p2_chk_accum_sig: signal is "true";
-    SIGNAL p2_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p2_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p3_data_in : DATA_BUS;
     SIGNAL p3_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -119,7 +119,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p3_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p3_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p3_chk_accum_sig: signal is "true";
-    SIGNAL p3_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p3_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p4_data_in : DATA_BUS;
     SIGNAL p4_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -128,7 +128,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p4_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p4_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p4_chk_accum_sig: signal is "true";
-    SIGNAL p4_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p4_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p5_data_in : DATA_BUS;
     SIGNAL p5_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -137,7 +137,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p5_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p5_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p5_chk_accum_sig: signal is "true";
-    SIGNAL p5_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p5_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p6_data_in : DATA_BUS;
     SIGNAL p6_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -146,7 +146,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p6_len_read_sig : UNSIGNED(15 DOWNTO 0);
     --SIGNAL p6_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p6_chk_accum_sig: signal is "true";
-    SIGNAL p6_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p6_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p7_data_in : DATA_BUS;
     SIGNAL p7_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -156,7 +156,7 @@ ARCHITECTURE normal OF ip_tx IS
     attribute dont_touch of p7_len_read_sig: signal is "true";
     --SIGNAL p7_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     --attribute dont_touch of p7_chk_accum_sig: signal is "true";
-    SIGNAL p7_buf_counter : UNSIGNED(6 DOWNTO 0);
+    SIGNAL p7_buf_counter : UNSIGNED(7 DOWNTO 0);
 
     SIGNAL p8_data_in : DATA_BUS;
     SIGNAL p8_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -330,7 +330,7 @@ BEGIN
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
                                 + UNSIGNED'(""&p0_data_in_valid(4)) + UNSIGNED'(""&p0_data_in_valid(3))
                                 + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
-                                ) mod 64;
+                                ) mod 128;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p0_data_in(0));
                             buf(TO_INTEGER(p0_buf_counter)) <= p0_data_in(0);
@@ -339,8 +339,8 @@ BEGIN
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
                                 + UNSIGNED'(""&p0_data_in_valid(4)) + UNSIGNED'(""&p0_data_in_valid(3))
                                 + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
-                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 64;
-                            p1_buf_counter <= (p0_buf_counter + 1) mod 64;
+                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 128;
+                            p1_buf_counter <= (p0_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p0_data_in(0)) + 20;
@@ -353,8 +353,8 @@ BEGIN
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
                                 + UNSIGNED'(""&p0_data_in_valid(4)) + UNSIGNED'(""&p0_data_in_valid(3))
                                 + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
-                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 64;
-                            p1_buf_counter <= (p0_buf_counter + 1) mod 64;
+                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 128;
+                            p1_buf_counter <= (p0_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p0_buf_counter)) <= p0_data_in(0);
                             valid_buf(TO_INTEGER(p0_buf_counter)) <= '1';
@@ -362,8 +362,8 @@ BEGIN
                                 + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
                                 + UNSIGNED'(""&p0_data_in_valid(4)) + UNSIGNED'(""&p0_data_in_valid(3))
                                 + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
-                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 64;
-                            p1_buf_counter <= (p0_buf_counter + 1) mod 64;
+                                + UNSIGNED'(""&p0_data_in_valid(0))) mod 128;
+                            p1_buf_counter <= (p0_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -402,7 +402,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p1_data_in(1));
                             buf(TO_INTEGER(p1_buf_counter)) <= p1_data_in(1);
                             valid_buf(TO_INTEGER(p1_buf_counter)) <= '1';
-                            p2_buf_counter <= (p1_buf_counter + 1) mod 64;
+                            p2_buf_counter <= (p1_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p1_data_in(1)) + 20;
@@ -411,11 +411,11 @@ BEGIN
                             --p2_chk_accum_sig <= p1_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p1_data_in(1)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p2_buf_counter <= (p1_buf_counter + 1) mod 64;
+                            p2_buf_counter <= (p1_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p1_buf_counter)) <= p1_data_in(1);
                             valid_buf(TO_INTEGER(p1_buf_counter)) <= '1';
-                            p2_buf_counter <= (p1_buf_counter + 1) mod 64;
+                            p2_buf_counter <= (p1_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -454,7 +454,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p2_data_in(2));
                             buf(TO_INTEGER(p2_buf_counter)) <= p2_data_in(2);
                             valid_buf(TO_INTEGER(p2_buf_counter)) <= '1';
-                            p3_buf_counter <= (p2_buf_counter + 1) mod 64;
+                            p3_buf_counter <= (p2_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p2_data_in(2)) + 20;
@@ -463,11 +463,11 @@ BEGIN
                             --p3_chk_accum_sig <= p2_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p2_data_in(2)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p3_buf_counter <= (p2_buf_counter + 1) mod 64;
+                            p3_buf_counter <= (p2_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p2_buf_counter)) <= p2_data_in(2);
                             valid_buf(TO_INTEGER(p2_buf_counter)) <= '1';
-                            p3_buf_counter <= (p2_buf_counter + 1) mod 64;
+                            p3_buf_counter <= (p2_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -506,7 +506,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p3_data_in(3));
                             buf(TO_INTEGER(p3_buf_counter)) <= p3_data_in(3);
                             valid_buf(TO_INTEGER(p3_buf_counter)) <= '1';
-                            p4_buf_counter <= (p3_buf_counter + 1) mod 64;
+                            p4_buf_counter <= (p3_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p3_data_in(3)) + 20;
@@ -515,11 +515,11 @@ BEGIN
                             --p4_chk_accum_sig <= p3_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p3_data_in(3)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p4_buf_counter <= (p3_buf_counter + 1) mod 64;
+                            p4_buf_counter <= (p3_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p3_buf_counter)) <= p3_data_in(3);
                             valid_buf(TO_INTEGER(p3_buf_counter)) <= '1';
-                            p4_buf_counter <= (p3_buf_counter + 1) mod 64;
+                            p4_buf_counter <= (p3_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -558,7 +558,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p4_data_in(4));
                             buf(TO_INTEGER(p4_buf_counter)) <= p4_data_in(4);
                             valid_buf(TO_INTEGER(p4_buf_counter)) <= '1';
-                            p5_buf_counter <= (p4_buf_counter + 1) mod 64;
+                            p5_buf_counter <= (p4_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p4_data_in(4)) + 20;
@@ -567,11 +567,11 @@ BEGIN
                             --p5_chk_accum_sig <= p4_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p4_data_in(4)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p5_buf_counter <= (p4_buf_counter + 1) mod 64;
+                            p5_buf_counter <= (p4_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p4_buf_counter)) <= p4_data_in(4);
                             valid_buf(TO_INTEGER(p4_buf_counter)) <= '1';
-                            p5_buf_counter <= (p4_buf_counter + 1) mod 64;
+                            p5_buf_counter <= (p4_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -610,7 +610,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p5_data_in(5));
                             buf(TO_INTEGER(p5_buf_counter)) <= p5_data_in(5);
                             valid_buf(TO_INTEGER(p5_buf_counter)) <= '1';
-                            p6_buf_counter <= (p5_buf_counter + 1) mod 64;
+                            p6_buf_counter <= (p5_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p5_data_in(5)) + 20;
@@ -619,11 +619,11 @@ BEGIN
                             --p6_chk_accum_sig <= p5_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p5_data_in(5)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p6_buf_counter <= (p5_buf_counter + 1) mod 64;
+                            p6_buf_counter <= (p5_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p5_buf_counter)) <= p5_data_in(5);
                             valid_buf(TO_INTEGER(p5_buf_counter)) <= '1';
-                            p6_buf_counter <= (p5_buf_counter + 1) mod 64;
+                            p6_buf_counter <= (p5_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -662,7 +662,7 @@ BEGIN
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p6_data_in(6));
                             buf(TO_INTEGER(p6_buf_counter)) <= p6_data_in(6);
                             valid_buf(TO_INTEGER(p6_buf_counter)) <= '1';
-                            p7_buf_counter <= (p6_buf_counter + 1) mod 64;
+                            p7_buf_counter <= (p6_buf_counter + 1) mod 128;
                         WHEN 14 =>
                             ip_pkt_len <= UNSIGNED(ip_pkt_len) +
                                 UNSIGNED(p6_data_in(6)) + 20;
@@ -671,11 +671,11 @@ BEGIN
                             --p7_chk_accum_sig <= p6_chk_accum_sig + UNSIGNED(
                             --    ip_pkt_len) + UNSIGNED(p6_data_in(6)) + 20;
                             ip_pkt_len_valid <= '1';
-                            p7_buf_counter <= (p6_buf_counter + 1) mod 64;
+                            p7_buf_counter <= (p6_buf_counter + 1) mod 128;
                         WHEN OTHERS =>
                             buf(TO_INTEGER(p6_buf_counter)) <= p6_data_in(6);
                             valid_buf(TO_INTEGER(p6_buf_counter)) <= '1';
-                            p7_buf_counter <= (p6_buf_counter + 1) mod 64;
+                            p7_buf_counter <= (p6_buf_counter + 1) mod 128;
                     END CASE;
                 END IF;
 
@@ -820,13 +820,13 @@ BEGIN
                             END IF;
                             --'0' hasn't been assigned to valid_buf yet
                             IF valid_buf(3) <= '1' THEN
-                                buf_out_counter <= "0000100";
+                                buf_out_counter <= "00000100";
                             ELSIF valid_buf(2) <= '1' THEN
-                                buf_out_counter <= "0000011";
+                                buf_out_counter <= "00000011";
                             ELSIF valid_buf(1) <= '1' THEN
-                                buf_out_counter <= "0000010";
+                                buf_out_counter <= "00000010";
                             ELSIF valid_buf(0) <= '1' THEN
-                                buf_out_counter <= "0000001";
+                                buf_out_counter <= "00000001";
                             END IF;
                             --IF valid_buf(3) <= '0' THEN
                             --    p8_output_counter <= p8_output_counter + 2;
@@ -848,38 +848,38 @@ BEGIN
                             -- Tuned for speed efficiency, otherwise use variables
                             p8_data_in(0) <= buf(TO_INTEGER(buf_out_counter));
                             p8_data_in(1) <= buf((TO_INTEGER(buf_out_counter)
-                                +1) mod 64);
+                                +1) mod 128);
                             p8_data_in(2) <= buf((TO_INTEGER(buf_out_counter)
-                                +2) mod 64);
+                                +2) mod 128);
                             p8_data_in(3) <= buf((TO_INTEGER(buf_out_counter)
-                                +3) mod 64);
+                                +3) mod 128);
                             p8_data_in(4) <= buf((TO_INTEGER(buf_out_counter)
-                                +4) mod 64);
+                                +4) mod 128);
                             p8_data_in(5) <= buf((TO_INTEGER(buf_out_counter)
-                                +5) mod 64);
+                                +5) mod 128);
                             p8_data_in(6) <= buf((TO_INTEGER(buf_out_counter)
-                                +6) mod 64);
+                                +6) mod 128);
                             p8_data_in(7) <= buf((TO_INTEGER(buf_out_counter)
-                                +7) mod 64);
+                                +7) mod 128);
 
                             p8_data_in_valid(0) <= valid_buf(TO_INTEGER(
                                 buf_out_counter));
                             p8_data_in_valid(1) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+1) mod 64);
+                                buf_out_counter)+1) mod 128);
                             p8_data_in_valid(2) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+2) mod 64);
+                                buf_out_counter)+2) mod 128);
                             p8_data_in_valid(3) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+3) mod 64);
+                                buf_out_counter)+3) mod 128);
                             p8_data_in_valid(4) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+4) mod 64);
+                                buf_out_counter)+4) mod 128);
                             p8_data_in_valid(5) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+5) mod 64);
+                                buf_out_counter)+5) mod 128);
                             p8_data_in_valid(6) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+6) mod 64);
+                                buf_out_counter)+6) mod 128);
                             p8_data_in_valid(7) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+7) mod 64);
+                                buf_out_counter)+7) mod 128);
 
-                            IF valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64
+                            IF valid_buf((TO_INTEGER(buf_out_counter)+7) mod 128
                                 ) = '0' THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
@@ -893,26 +893,26 @@ BEGIN
                                 ip_pkt_len <= (OTHERS => '0');
                                 ip_pkt_len_valid <= '0';
                             ELSE
-                                buf_out_counter <= (buf_out_counter + 8) mod 64;
+                                buf_out_counter <= (buf_out_counter + 8) mod 128;
                             END IF;
 
                             buf(TO_INTEGER(buf_out_counter)) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= x"00";
 
                             valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= '0';
 
                         WHEN OTHERS =>
                             p8_enable <= '0';
