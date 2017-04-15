@@ -724,21 +724,21 @@ BEGIN
                             ELSIF valid_buf(0) <= '1' THEN
                                 buf_out_counter <= "00000001";
                             END IF;
-                            --IF valid_buf(3) <= '0' THEN
-                            --    p8_output_counter <= p8_output_counter + 2;
-                            --    p8_data_in_end <= '1';
+                            IF valid_buf(3) <= '0' THEN
+                                p8_output_counter <= p8_output_counter + 2;
+                                p8_data_in_end <= '1';
 
-                            --    buf <= (OTHERS => x"00");
-                            --    valid_buf <= (OTHERS => '0');
-                            --    p0_buf_counter <= (OTHERS => '0');
-                            --    buf_out_counter <= (OTHERS => '0');
-                            --    p0_len_read_sig <= (OTHERS => '0');
-                            --    p8_chk_accum_sig <= (OTHERS => '0');
-                            --    ip_pkt_len <= (OTHERS => '0');
-                            --    ip_pkt_len_valid <= '0';
-                            --ELSE
+                                buf <= (OTHERS => x"00");
+                                valid_buf <= (OTHERS => '0');
+                                p0_buf_counter <= (OTHERS => '0');
+                                buf_out_counter <= (OTHERS => '0');
+                                p0_len_read_sig <= (OTHERS => '0');
+                                p8_chk_accum_sig <= (OTHERS => '0');
+                                ip_pkt_len <= (OTHERS => '0');
+                                ip_pkt_len_valid <= '0';
+                            ELSE
                                 p8_output_counter <= p8_output_counter + 1;
-                            --END IF;
+                            END IF;
                         WHEN 3 =>
                             -- TODO: handle slow data? (buffer shouldn't empty)
                             -- Tuned for speed efficiency, otherwise use variables
@@ -779,15 +779,6 @@ BEGIN
                                 ) = '0' THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
-
-                                buf <= (OTHERS => x"00");
-                                valid_buf <= (OTHERS => '0');
-                                p0_buf_counter <= (OTHERS => '0');
-                                buf_out_counter <= (OTHERS => '0');
-                                p0_len_read_sig <= (OTHERS => '0');
-                                p8_chk_accum_sig <= (OTHERS => '0');
-                                ip_pkt_len <= (OTHERS => '0');
-                                ip_pkt_len_valid <= '0';
                             ELSE
                                 buf_out_counter <= (buf_out_counter + 8) mod 128;
                             END IF;
