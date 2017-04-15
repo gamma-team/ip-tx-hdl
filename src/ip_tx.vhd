@@ -291,6 +291,15 @@ BEGIN
                     p0_chk_accum_sig <= (OTHERS => '0');
                 END IF;
 
+                p1_chk_accum_sig <= p0_chk_accum_sig;
+                p2_chk_accum_sig <= p1_chk_accum_sig;
+                p3_chk_accum_sig <= p2_chk_accum_sig;
+                p4_chk_accum_sig <= p3_chk_accum_sig;
+                p5_chk_accum_sig <= p4_chk_accum_sig;
+                p6_chk_accum_sig <= p5_chk_accum_sig;
+                p7_chk_accum_sig <= p6_chk_accum_sig;
+                p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig;
+
                 -- Start Stage 0 of Pipeline
                 IF p0_data_in_valid(0) = '1' THEN
                     p1_chk_accum_sig <= (OTHERS => '0');
@@ -324,6 +333,11 @@ BEGIN
                             IF p0_data_in(0) /= UDP_PROTO THEN
                                 p0_data_in_err <= '1'; --Insert new error here
                             END IF;
+                            p0_buf_counter <= (p0_buf_counter + UNSIGNED'(""&p0_data_in_valid(7))
+                                + UNSIGNED'(""&p0_data_in_valid(6)) + UNSIGNED'(""&p0_data_in_valid(5))
+                                + UNSIGNED'(""&p0_data_in_valid(4)) + UNSIGNED'(""&p0_data_in_valid(3))
+                                + UNSIGNED'(""&p0_data_in_valid(2)) + UNSIGNED'(""&p0_data_in_valid(1))
+                                ) mod 64;
                         WHEN 13 =>
                             ip_pkt_len(15 DOWNTO 8) <= UNSIGNED(p0_data_in(0));
                             buf(TO_INTEGER(p0_buf_counter)) <= p0_data_in(0);
@@ -627,7 +641,6 @@ BEGIN
 
                 -- Start Stage 6 of Pipeline
                 IF p6_data_in_valid(6) = '1' THEN
-                    p7_chk_accum_sig <= p6_chk_accum_sig;
                     CASE TO_INTEGER(p6_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -680,7 +693,6 @@ BEGIN
 
                 -- Start Stage 7 of Pipeline
                 IF p7_data_in_valid(7) = '1' THEN
-                    p8_chk_accum_sig <= p8_chk_accum_sig + p7_chk_accum_sig;
                     CASE TO_INTEGER(p7_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -762,6 +774,7 @@ BEGIN
                             p6_chk_accum_sig <= (OTHERS => '0');
                             p7_chk_accum_sig <= (OTHERS => '0');
                             p8_chk_accum_sig <= (OTHERS => '0');
+                            ip_pkt_len <= (OTHERS => '0');
                             p8_data_in_start <= '1';
                             p8_data_in_valid <= (OTHERS => '1');
                             p8_output_counter <= p8_output_counter + 1;
@@ -943,15 +956,6 @@ BEGIN
                 p6_data_in_err <= p5_data_in_err;
                 p7_data_in_err <= p6_data_in_err;
                 --p8_data_in_err <= p7_data_in_err;
-
-                --p1_chk_accum_sig <= p0_chk_accum_sig;
-                --p2_chk_accum_sig <= p1_chk_accum_sig;
-                --p3_chk_accum_sig <= p2_chk_accum_sig;
-                --p4_chk_accum_sig <= p3_chk_accum_sig;
-                --p5_chk_accum_sig <= p4_chk_accum_sig;
-                --p6_chk_accum_sig <= p5_chk_accum_sig;
-                --p7_chk_accum_sig <= p6_chk_accum_sig;
-                --p8_chk_accum_sig <= p7_chk_accum_sig;
             END IF;
         END IF;
     END PROCESS;
