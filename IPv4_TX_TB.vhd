@@ -241,6 +241,12 @@ BEGIN
                     WAIT UNTIL FALLING_EDGE(Clk);
                     WAIT UNTIL FALLING_EDGE(Clk);
                     WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
+                    WAIT UNTIL FALLING_EDGE(Clk);
                 END IF;
             ELSE
                 Test_cases(tc_plc) <= Cur_tc;
