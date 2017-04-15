@@ -291,7 +291,7 @@ BEGIN
                     p0_chk_accum_sig <= (OTHERS => '0');
                 END IF;
 
-                p1_chk_accum_sig <= p0_chk_accum_sig;
+                p1_chk_accum_sig <= (OTHERS => '0');
                 p2_chk_accum_sig <= p1_chk_accum_sig;
                 p3_chk_accum_sig <= p2_chk_accum_sig;
                 p4_chk_accum_sig <= p3_chk_accum_sig;
@@ -302,7 +302,6 @@ BEGIN
 
                 -- Start Stage 0 of Pipeline
                 IF p0_data_in_valid(0) = '1' THEN
-                    p1_chk_accum_sig <= (OTHERS => '0');
                     -- Nothing has been added to p0_len_read_sig yet first time
                     CASE TO_INTEGER(p0_len_read_sig) IS
                     -- Source Address
@@ -376,7 +375,6 @@ BEGIN
 
                 -- Start Stage 1 of Pipeline
                 IF p1_data_in_valid(1) = '1' THEN
-                    p2_chk_accum_sig <= p1_chk_accum_sig;
                     CASE TO_INTEGER(p1_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -429,7 +427,6 @@ BEGIN
 
                 -- Start Stage 2 of Pipeline
                 IF p2_data_in_valid(2) = '1' THEN
-                    p3_chk_accum_sig <= p2_chk_accum_sig;
                     CASE TO_INTEGER(p2_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -482,7 +479,6 @@ BEGIN
 
                 -- Start Stage 3 of Pipeline
                 IF p3_data_in_valid(3) = '1' THEN
-                    p4_chk_accum_sig <= p3_chk_accum_sig;
                     CASE TO_INTEGER(p3_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -535,7 +531,6 @@ BEGIN
 
                 -- Start Stage 4 of Pipeline
                 IF p4_data_in_valid(4) = '1' THEN
-                    p5_chk_accum_sig <= p4_chk_accum_sig;
                     CASE TO_INTEGER(p4_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
@@ -588,7 +583,6 @@ BEGIN
 
                 -- Start Stage 5 of Pipeline
                 IF p5_data_in_valid(5) = '1' THEN
-                    p6_chk_accum_sig <= p5_chk_accum_sig;
                     CASE TO_INTEGER(p5_len_read_sig) IS
                     -- Source Address
                         WHEN 0 =>
