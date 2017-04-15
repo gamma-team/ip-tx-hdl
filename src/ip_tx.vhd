@@ -854,21 +854,25 @@ BEGIN
                                 p8_data_in(4) <= buf(0);
                                 p8_data_in_valid(4) <= '1';
                                 valid_buf(0) <= '0';
+                                buf(0) <= x"00";
                             END IF;
                             IF valid_buf(1) = '1' THEN
                                 p8_data_in(5) <= buf(1);
                                 p8_data_in_valid(5) <= '1';
                                 valid_buf(1) <= '0';
+                                buf(1) <= x"00";
                             END IF;
                             IF valid_buf(2) = '1' THEN
                                 p8_data_in(6) <= buf(2);
                                 p8_data_in_valid(6) <= '1';
                                 valid_buf(2) <= '0';
+                                buf(2) <= x"00";
                             END IF;
                             IF valid_buf(3) = '1' THEN
                                 p8_data_in(7) <= buf(3);
                                 p8_data_in_valid(7) <= '1';
                                 valid_buf(3) <= '0';
+                                buf(3) <= x"00";
                             END IF;
                             --'0' hasn't been assigned to valid_buf yet
                             IF valid_buf(3) <= '1' THEN
@@ -935,6 +939,25 @@ BEGIN
                                 buf_counter <= (OTHERS => '0');
                                 buf_out_counter <= (OTHERS => '0');
                             END IF;
+
+                            buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= x"00";
+
+                            valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= '0';
+
                         WHEN OTHERS =>
                             p8_enable <= '0';
                             p8_output_counter <= (OTHERS => '0');
