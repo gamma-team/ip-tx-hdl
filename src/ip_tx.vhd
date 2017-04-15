@@ -65,7 +65,7 @@ ARCHITECTURE normal OF ip_tx IS
 
     SIGNAL buf : BUFF;
     SIGNAL valid_buf : STD_LOGIC_VECTOR(63 DOWNTO 0);
-    SIGNAL buf_out_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL buf_out_counter : UNSIGNED(6 DOWNTO 0);
     SIGNAL end_counter : UNSIGNED(5 DOWNTO 0);
 
     SIGNAL ip_hdr_len : STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -820,13 +820,13 @@ BEGIN
                             END IF;
                             --'0' hasn't been assigned to valid_buf yet
                             IF valid_buf(3) <= '1' THEN
-                                buf_out_counter <= "000100";
+                                buf_out_counter <= "0000100";
                             ELSIF valid_buf(2) <= '1' THEN
-                                buf_out_counter <= "000011";
+                                buf_out_counter <= "0000011";
                             ELSIF valid_buf(1) <= '1' THEN
-                                buf_out_counter <= "000010";
+                                buf_out_counter <= "0000010";
                             ELSIF valid_buf(0) <= '1' THEN
-                                buf_out_counter <= "000001";
+                                buf_out_counter <= "0000001";
                             END IF;
                             --IF valid_buf(3) <= '0' THEN
                             --    p8_output_counter <= p8_output_counter + 2;
@@ -893,7 +893,7 @@ BEGIN
                                 ip_pkt_len <= (OTHERS => '0');
                                 ip_pkt_len_valid <= '0';
                             ELSE
-                                buf_out_counter <= (buf_out_counter + 8) ;
+                                buf_out_counter <= (buf_out_counter + 8) mod 64;
                             END IF;
 
                             buf(TO_INTEGER(buf_out_counter)) <= x"00";
