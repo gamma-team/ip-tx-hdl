@@ -92,7 +92,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p0_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p0_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p0_chk_accum_sig: signal is "true";
-    SIGNAL p0_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p0_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p1_data_in : DATA_BUS;
     SIGNAL p1_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -101,7 +101,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p1_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p1_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p1_chk_accum_sig: signal is "true";
-    SIGNAL p1_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p1_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p2_data_in : DATA_BUS;
     SIGNAL p2_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -110,7 +110,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p2_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p2_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p2_chk_accum_sig: signal is "true";
-    SIGNAL p2_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p2_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p3_data_in : DATA_BUS;
     SIGNAL p3_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -119,7 +119,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p3_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p3_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p3_chk_accum_sig: signal is "true";
-    SIGNAL p3_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p3_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p4_data_in : DATA_BUS;
     SIGNAL p4_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -128,7 +128,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p4_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p4_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p4_chk_accum_sig: signal is "true";
-    SIGNAL p4_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p4_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p5_data_in : DATA_BUS;
     SIGNAL p5_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -137,7 +137,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p5_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p5_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p5_chk_accum_sig: signal is "true";
-    SIGNAL p5_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p5_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p6_data_in : DATA_BUS;
     SIGNAL p6_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -146,7 +146,7 @@ ARCHITECTURE normal OF ip_tx IS
     SIGNAL p6_len_read_sig : UNSIGNED(15 DOWNTO 0);
     SIGNAL p6_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p6_chk_accum_sig: signal is "true";
-    SIGNAL p6_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p6_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p7_data_in : DATA_BUS;
     SIGNAL p7_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -156,7 +156,7 @@ ARCHITECTURE normal OF ip_tx IS
     attribute dont_touch of p7_len_read_sig: signal is "true";
     SIGNAL p7_chk_accum_sig : UNSIGNED(20 DOWNTO 0);
     attribute dont_touch of p7_chk_accum_sig: signal is "true";
-    SIGNAL p7_buf_counter : UNSIGNED(5 DOWNTO 0);
+    SIGNAL p7_buf_counter : UNSIGNED(6 DOWNTO 0);
 
     SIGNAL p8_data_in : DATA_BUS;
     SIGNAL p8_data_in_valid : STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -204,6 +204,7 @@ BEGIN
 
                 p0_len_read_sig <= (OTHERS => '0');
                 p0_chk_accum_sig <= (OTHERS => '0');
+                p0_buf_counter <= (OTHERS => '0');
 
                 p1_data_in <= (OTHERS => x"00");
                 p1_data_in_valid <= (OTHERS => '0');
@@ -211,6 +212,7 @@ BEGIN
                 p1_data_in_err <= '0';
                 p1_len_read_sig <= (OTHERS => '0');
                 p1_chk_accum_sig <= (OTHERS => '0');
+                p1_buf_counter <= (OTHERS => '0');
 
                 p2_data_in <= (OTHERS => x"00");
                 p2_data_in_valid <= (OTHERS => '0');
@@ -218,6 +220,7 @@ BEGIN
                 p2_data_in_err <= '0';
                 p2_len_read_sig <= (OTHERS => '0');
                 p2_chk_accum_sig <= (OTHERS => '0');
+                p2_buf_counter <= (OTHERS => '0');
 
                 p3_data_in <= (OTHERS => x"00");
                 p3_data_in_valid <= (OTHERS => '0');
@@ -225,6 +228,7 @@ BEGIN
                 p3_data_in_err <= '0';
                 p3_len_read_sig <= (OTHERS => '0');
                 p3_chk_accum_sig <= (OTHERS => '0');
+                p3_buf_counter <= (OTHERS => '0');
 
                 p4_data_in <= (OTHERS => x"00");
                 p4_data_in_valid <= (OTHERS => '0');
@@ -232,6 +236,7 @@ BEGIN
                 p4_data_in_err <= '0';
                 p4_len_read_sig <= (OTHERS => '0');
                 p4_chk_accum_sig <= (OTHERS => '0');
+                p4_buf_counter <= (OTHERS => '0');
 
                 p5_data_in <= (OTHERS => x"00");
                 p5_data_in_valid <= (OTHERS => '0');
@@ -239,6 +244,7 @@ BEGIN
                 p5_data_in_err <= '0';
                 p5_len_read_sig <= (OTHERS => '0');
                 p5_chk_accum_sig <= (OTHERS => '0');
+                p5_buf_counter <= (OTHERS => '0');
 
                 p6_data_in <= (OTHERS => x"00");
                 p6_data_in_valid <= (OTHERS => '0');
@@ -246,6 +252,7 @@ BEGIN
                 p6_data_in_err <= '0';
                 p6_len_read_sig <= (OTHERS => '0');
                 p6_chk_accum_sig <= (OTHERS => '0');
+                p6_buf_counter <= (OTHERS => '0');
 
                 p7_data_in <= (OTHERS => x"00");
                 p7_data_in_valid <= (OTHERS => '0');
@@ -253,6 +260,7 @@ BEGIN
                 p7_data_in_err <= '0';
                 p7_len_read_sig <= (OTHERS => '0');
                 p7_chk_accum_sig <= (OTHERS => '0');
+                p7_buf_counter <= (OTHERS => '0');
 
                 p8_data_in <= (OTHERS => x"00");
                 p8_data_in_valid <= (OTHERS => '0');
@@ -830,38 +838,38 @@ BEGIN
                             -- Tuned for speed efficiency, otherwise use variables
                             p8_data_in(0) <= buf(TO_INTEGER(buf_out_counter));
                             p8_data_in(1) <= buf((TO_INTEGER(buf_out_counter)
-                                +1) );
+                                +1) mod 64);
                             p8_data_in(2) <= buf((TO_INTEGER(buf_out_counter)
-                                +2) );
+                                +2) mod 64);
                             p8_data_in(3) <= buf((TO_INTEGER(buf_out_counter)
-                                +3) );
+                                +3) mod 64);
                             p8_data_in(4) <= buf((TO_INTEGER(buf_out_counter)
-                                +4) );
+                                +4) mod 64);
                             p8_data_in(5) <= buf((TO_INTEGER(buf_out_counter)
-                                +5) );
+                                +5) mod 64);
                             p8_data_in(6) <= buf((TO_INTEGER(buf_out_counter)
-                                +6) );
+                                +6) mod 64);
                             p8_data_in(7) <= buf((TO_INTEGER(buf_out_counter)
-                                +7) );
+                                +7) mod 64);
 
                             p8_data_in_valid(0) <= valid_buf(TO_INTEGER(
                                 buf_out_counter));
                             p8_data_in_valid(1) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+1) );
+                                buf_out_counter)+1) mod 64);
                             p8_data_in_valid(2) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+2) );
+                                buf_out_counter)+2) mod 64);
                             p8_data_in_valid(3) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+3) );
+                                buf_out_counter)+3) mod 64);
                             p8_data_in_valid(4) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+4) );
+                                buf_out_counter)+4) mod 64);
                             p8_data_in_valid(5) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+5) );
+                                buf_out_counter)+5) mod 64);
                             p8_data_in_valid(6) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+6) );
+                                buf_out_counter)+6) mod 64);
                             p8_data_in_valid(7) <= valid_buf((TO_INTEGER(
-                                buf_out_counter)+7) );
+                                buf_out_counter)+7) mod 64);
 
-                            IF valid_buf((TO_INTEGER(buf_out_counter)+7)
+                            IF valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64
                                 ) = '0' THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
@@ -874,22 +882,22 @@ BEGIN
                             END IF;
 
                             buf(TO_INTEGER(buf_out_counter)) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+1) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+2) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+3) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+4) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+5) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+6) ) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+7) ) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= x"00";
+                            buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= x"00";
 
                             valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+1) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+2) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+3) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+4) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+5) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+6) ) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+7) ) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 64) <= '0';
+                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 64) <= '0';
 
                         WHEN OTHERS =>
                             p8_enable <= '0';
