@@ -939,6 +939,8 @@ BEGIN
                                 valid_buf <= (OTHERS => '0');
                                 buf_counter <= (OTHERS => '0');
                                 buf_out_counter <= (OTHERS => '0');
+                            ELSE
+                                buf_out_counter <= (buf_out_counter + 8) mod 64;
                             END IF;
 
                             buf(TO_INTEGER(buf_out_counter)) <= x"00";
