@@ -186,7 +186,7 @@ BEGIN
                 ip_id <= (OTHERS => '0');
                 ip_flag_frag <= (OTHERS => '0');
                 ip_ttl_proto <= x"4011";
-                ip_hdr_chk <= '0'&x"0000";
+                ip_hdr_chk <= (OTHERS => '0');
                 ip_addr_src_hi <= (OTHERS => '0');
                 ip_addr_src_lo <= (OTHERS => '0');
                 ip_addr_dst_hi <= (OTHERS => '0');
@@ -246,7 +246,7 @@ BEGIN
                 p7_data_in_end <= '0';
                 p7_data_in_err <= '0';
                 p7_len_read_sig <= (OTHERS => '0');
-                p7_chk_accum_sig <= "0"&x"08511";
+                p7_chk_accum_sig <= (OTHERS => '0');
 
                 p8_data_in <= (OTHERS => x"00");
                 p8_data_in_valid <= (OTHERS => '0');
@@ -790,6 +790,7 @@ BEGIN
 
                             --Enable for Stage 8
                             p8_enable <= '1';
+                            p7_chk_accum_sig <= p7_chk_accum_sig + x"8511";
                     END CASE;
                 END IF;
 
@@ -819,7 +820,7 @@ BEGIN
                             p4_chk_accum_sig <= (OTHERS => '0');
                             p5_chk_accum_sig <= (OTHERS => '0');
                             p6_chk_accum_sig <= (OTHERS => '0');
-                            p7_chk_accum_sig <= "0"&x"08511";
+                            p7_chk_accum_sig <= (OTHERS => '0');
                             p8_chk_accum_sig <= (OTHERS => '0');
                             p8_data_in_start <= '1';
                             p8_data_in_valid <= (OTHERS => '1');
@@ -830,11 +831,11 @@ BEGIN
                             -- Efficient checksum assigning without variables
                             IF ip_hdr_chk(16) = '1' AND
                                 ip_hdr_chk(7 DOWNTO 0) = x"FF" THEN
-                                p8_data_in(2) <= STD_LOGIC_VECTOR(ip_hdr_chk(15 DOWNTO 8) + 1);
-                                p8_data_in(3) <= x"00";
+                                p8_data_in(2) <=  STD_LOGIC_VECTOR(x"FF" - (ip_hdr_chk(15 DOWNTO 8) + 1));
+                                p8_data_in(3) <= x"FF";
                             ELSE
-                                p8_data_in(2) <= STD_LOGIC_VECTOR(ip_hdr_chk(15 DOWNTO 8));
-                                p8_data_in(3) <= STD_LOGIC_VECTOR(ip_hdr_chk(7 DOWNTO 0) + 1);
+                                p8_data_in(2) <= STD_LOGIC_VECTOR(x"FF" - ip_hdr_chk(15 DOWNTO 8));
+                                p8_data_in(3) <= STD_LOGIC_VECTOR(x"FF" - (ip_hdr_chk(7 DOWNTO 0) + 1));
                             END IF;
                             ip_hdr_chk <= (OTHERS => '0');
                             p8_data_in(4) <= ip_addr_src_hi(15 DOWNTO 8);
