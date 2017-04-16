@@ -709,15 +709,16 @@ BEGIN
                                 buf_out_counter <= "00000010";
                             ELSIF valid_buf(0) <= '1' THEN
                                 buf_out_counter <= "00000001";
+                            ELSE
+                                buf_out_counter <= "00000000";
                             END IF;
-                            IF valid_buf(3) <= '0' THEN
+                            IF valid_buf(3) <= '0' AND p7_data_in_end = '1' THEN
                                 p8_output_counter <= p8_output_counter + 2;
                                 p8_data_in_end <= '1';
                             ELSE
                                 p8_output_counter <= p8_output_counter + 1;
                             END IF;
                         WHEN 3 =>
-                            -- TODO: handle slow data? (buffer shouldn't empty)
                             -- Tuned for speed efficiency, otherwise use variables
                             p8_data_in(0) <= buf(TO_INTEGER(buf_out_counter));
                             p8_data_in(1) <= buf((TO_INTEGER(buf_out_counter)
@@ -752,32 +753,109 @@ BEGIN
                             p8_data_in_valid(7) <= valid_buf((TO_INTEGER(
                                 buf_out_counter)+7) mod 128);
 
-                            IF valid_buf((TO_INTEGER(buf_out_counter)+7) mod 128
-                                ) = '0' THEN
+                            IF  p7_data_in_end = '1' AND valid_buf((TO_INTEGER(
+                                        buf_out_counter)+7) mod 128) = '0'THEN
                                 p8_output_counter <= p8_output_counter + 1;
                                 p8_data_in_end <= '1';
+                            ELSIF valid_buf(TO_INTEGER(buf_out_counter))
+                                                                = '0' THEN
+                                buf_out_counter <= buf_out_counter;
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+1)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 1) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+2)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 2) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+3)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 3) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+4)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 4) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+5)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 5) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+6)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 6) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= '0';
+                            ELSIF valid_buf((TO_INTEGER(buf_out_counter)+7)
+                                                        mod 128) = '0' THEN
+                                buf_out_counter <= (buf_out_counter + 7) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= '0';
                             ELSE
                                 buf_out_counter <= (buf_out_counter + 8) mod 128;
+                                buf(TO_INTEGER(buf_out_counter)) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= x"00";
+                                buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= x"00";
+                                valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= '0';
+                                valid_buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= '0';
                             END IF;
-
-                            buf(TO_INTEGER(buf_out_counter)) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= x"00";
-                            buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= x"00";
-
-                            valid_buf(TO_INTEGER(buf_out_counter)) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+1) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+2) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+3) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+4) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+5) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+6) mod 128) <= '0';
-                            valid_buf((TO_INTEGER(buf_out_counter)+7) mod 128) <= '0';
-
                         WHEN OTHERS =>
                             p8_enable <= '0';
                             p8_output_counter <= (OTHERS => '0');
@@ -869,7 +947,9 @@ BEGIN
                 p4_data_in_end <= p3_data_in_end;
                 p5_data_in_end <= p4_data_in_end;
                 p6_data_in_end <= p5_data_in_end;
-                p7_data_in_end <= p6_data_in_end;
+                IF p7_data_in_end = '0' THEN
+                    p7_data_in_end <= p6_data_in_end;
+                END IF;
                 --p8_data_in_end <= p7_data_in_end;
 
                 IF p0_data_in_err = '1' THEN
