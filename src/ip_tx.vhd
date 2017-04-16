@@ -32,6 +32,7 @@ ENTITY ip_tx IS
         -- Indicate that there has been an error in the current data stream.
         -- Data_in will be ignored until the next Data_in_start assertion.
         Data_in_err : IN STD_LOGIC;
+        Data_in_ready : OUT STD_LOGIC;
 
         -- IPv4 output bus to the MAC.
         -- Byte offsets (all integer types are big endian):
@@ -51,7 +52,8 @@ ENTITY ip_tx IS
         Data_out_end : OUT STD_LOGIC;
         -- Indicate that there has been an error in the current datagram.
         -- Data_out should be ignored until the next Data_out_start assertion.
-        Data_out_err : OUT STD_LOGIC
+        Data_out_err : OUT STD_LOGIC;
+        Data_out_ready : IN STD_LOGIC
     );
 END ENTITY;
 
@@ -100,11 +102,17 @@ ARCHITECTURE normal OF ip_tx IS
 
     SIGNAL data_in_sig : DATA_BUS;
 
+    SIGNAL flow_enable : STD_LOGIC;
 BEGIN
     -- Input signal wiring
     gen_in_data: FOR i IN 0 TO width - 1 GENERATE
         data_in_sig(i) <= Data_in((i + 1) * 8 - 1 DOWNTO i * 8);
     END GENERATE;
+
+    Data_in_ready <= flow_enable;
+    flow_enable <= '1' WHEN (p1_data_in_valid = x"00"
+        AND p0_data_in_end /= '1') OR Data_out_ready = '1'
+        ELSE '0';
 
     PROCESS(Clk)
         VARIABLE p0_len_read : UNSIGNED(15 DOWNTO 0);
@@ -150,7 +158,7 @@ BEGIN
                 p1_data_in_start <= '0';
                 p1_data_in_end <= '0';
                 p1_data_in_err <= '0';
-            ELSE
+            ELSIF flow_enable = '1' THEN
                 p0_data_in <= data_in_sig;
                 p0_data_in_valid <= (OTHERS => '0');
                 p0_data_in_start <= Data_in_start;
